@@ -57,9 +57,8 @@ public class FilmService {
             log.info(msg);
             throw new WrongFilmData(msg);
         }
-        filmId = filmsMapKeyCounter;
+        filmId = ++filmsMapKeyCounter;
         film.setId(filmId);
-        filmsMapKeyCounter++;
 
         films.put(filmId, film);
         log.info("Операция {} выполнена уcпешно", doDo);

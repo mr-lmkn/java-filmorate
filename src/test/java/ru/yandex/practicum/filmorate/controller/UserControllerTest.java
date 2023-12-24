@@ -66,7 +66,7 @@ class UserControllerTest {
                 .expectStatus().isOk();
 
         ArrayList userList = new ArrayList<>();
-        user.setId(0);
+        user.setId(1);
         userList.add(user);
 
         webClient
@@ -127,7 +127,7 @@ class UserControllerTest {
                 .expectStatus().isOk();
 
         // Изменяем
-        user2.setId(1);
+        user2.setId(2);
         user2.setName("User_3_Login");
         webClient
                 .put().uri("/users")
@@ -158,7 +158,7 @@ class UserControllerTest {
                 .expectStatus().isOk();
 
         webClient
-                .delete().uri("/users/0")
+                .delete().uri("/users/1")
                 .exchange()
                 .expectStatus()
                 .isEqualTo(204);

@@ -45,7 +45,7 @@ public class UserService {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         Integer userMapKey;
-        Integer userId = user.getId();
+        Integer userId;// = user.getId();
         String login = user.getLogin();
         String name = user.getName();
         String doDo = "";
@@ -60,9 +60,9 @@ public class UserService {
             log.info(msg);
             throw new WrongUserData(msg);
         }
-        userId = usersMapKeyCounter;
+
+        userId = ++usersMapKeyCounter;
         user.setId(userId);
-        usersMapKeyCounter++;
 
         users.put(userId, user);
         log.info("Операция {} выполнена уcпешно", doDo);

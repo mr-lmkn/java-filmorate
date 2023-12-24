@@ -62,7 +62,7 @@ public class UserController {
 
     @PutMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public User update(@Valid @RequestBody User user) {
-        log.info("Got create or update user request: {} -> {}", user);
+        log.info("Got update user request: {} -> {}", user);
         try {
             return users.updateUser(user);
         } catch (WrongUserData er) {

@@ -17,8 +17,8 @@ public class MinReleaseDateConstraintValidator implements ConstraintValidator<Mi
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
         log.debug("Setting 'ru.yandex.practicum.filmorate.validation.minReleaseDate' is set to {}", minReleaseDate);
-        log.debug("Compare {} to {}", minReleaseDate.toString(), value.toString());
         if (value != null) {
+            log.debug("Compare {} to {}", minReleaseDate, value.toString());
             return value.isAfter(LocalDate.parse(minReleaseDate, formatter));
         }
         return true;

@@ -35,7 +35,7 @@ public class FilmController {
 
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public Film add(@Valid @RequestBody Film film) {
-        log.info("Got create or update film request: {} ", film);
+        log.info("Got create film request: {} ", film);
         try {
             return films.createFilm(film);
         } catch (WrongFilmData er) {
@@ -46,7 +46,7 @@ public class FilmController {
 
     @PutMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public Film update(@Valid @RequestBody Film film) {
-        log.info("Got create or update film request: {} ", film);
+        log.info("Got update film request: {} ", film);
         try {
             return films.updateFilm(film);
         } catch (WrongFilmData er) {
