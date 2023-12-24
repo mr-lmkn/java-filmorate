@@ -34,7 +34,6 @@ public class User {
     private String login;
 
     // имя для отображения
-    @NotNull
     private String name;
 
     // дата рождения

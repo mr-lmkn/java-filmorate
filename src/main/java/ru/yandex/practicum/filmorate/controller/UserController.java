@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
 import ru.yandex.practicum.filmorate.exception.WrongUserData;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -68,6 +69,10 @@ public class UserController {
         } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
+        } catch (
+                NoDataFoubd e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 

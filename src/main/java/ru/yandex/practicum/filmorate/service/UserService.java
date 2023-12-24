@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
 import ru.yandex.practicum.filmorate.exception.WrongUserData;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -70,7 +71,7 @@ public class UserService {
         return user;
     }
 
-    public User updateUser(User user) throws WrongUserData {
+    public User updateUser(User user) throws WrongUserData, NoDataFoubd {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         Integer userMapKey;
@@ -89,7 +90,7 @@ public class UserService {
             if (!users.containsKey(userId)) {
                 String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userId);
                 log.info(msg);
-                throw new WrongUserData(msg);
+                throw new NoDataFoubd(msg);
             }
 
             if (existsSameUser.isPresent()) {

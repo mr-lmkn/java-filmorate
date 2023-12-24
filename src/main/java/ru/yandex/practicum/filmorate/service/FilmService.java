@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
 import ru.yandex.practicum.filmorate.exception.WrongFilmData;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -66,7 +67,7 @@ public class FilmService {
         return film;
     }
 
-    public Film updateFilm(Film film) throws WrongFilmData {
+    public Film updateFilm(Film film) throws WrongFilmData, NoDataFoubd {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         log.debug("Получен запрос {} ", film.toString());
@@ -83,7 +84,7 @@ public class FilmService {
             if (!films.containsKey(filmId)) {
                 String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmId);
                 log.info(msg);
-                throw new WrongFilmData(msg);
+                throw new NoDataFoubd(msg);
             }
 
             if (existsSameFilm.isPresent()) {
