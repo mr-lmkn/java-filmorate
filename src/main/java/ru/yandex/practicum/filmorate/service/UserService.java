@@ -45,11 +45,10 @@ public class UserService {
     public User createUser(User user) throws WrongUserData {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
-        Integer userMapKey;
         Integer userId;// = user.getId();
         String login = user.getLogin();
         String name = user.getName();
-        String doDo = "";
+        String doDo;
         Optional<User> existsSameUser = getUserByLogin(login);
 
         if (name == null || name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
@@ -74,11 +73,10 @@ public class UserService {
     public User updateUser(User user) throws WrongUserData, NoDataFoubd {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
-        Integer userMapKey;
         Integer userId = user.getId();
         String login = user.getLogin();
         String name = user.getName();
-        String doDo = "";
+        String doDo;
         Optional<User> existsSameUser = getUserByLogin(login);
 
         if (name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
