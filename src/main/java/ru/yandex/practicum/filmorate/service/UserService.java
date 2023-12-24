@@ -52,7 +52,7 @@ public class UserService {
         String doDo = "";
         Optional<User> existsSameUser = getUserByLogin(login);
 
-        if (name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
+        if (name == null || name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
 
         doDo = "создание пользователя";
         log.info("Инициировано {}", doDo);
