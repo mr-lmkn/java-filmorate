@@ -7,49 +7,64 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.exception.WrongFilmData;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.exception.WrongUserData;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.*;
 
-@RestController
-@RequestMapping(value = "/films", produces = "application/json")
-@Slf4j
-public class FilmController {
+/**
+ * <H1>UserController<H1/>
+ * создание пользователя;
+ * обновление пользователя;
+ * получение списка всех пользователей.
+ * <p>
+ * электронная почта не может быть пустой и должна содержать символ @;
+ * логин не может быть пустым и содержать пробелы;
+ * имя для отображения может быть пустым — в таком случае будет использован логин;
+ * дата рождения не может быть в будущем.
+ */
 
-    FilmService films = new FilmService();
+@RestController
+//@ControllerAdvice extends ResponseEntityExceptionHandler
+@RequestMapping("/users")
+@Slf4j
+public class UserController {
+
+    UserService users = new UserService();
 
     @GetMapping(produces = "application/json;")
-    public List<Film> getAll() {
+    public List<User> getAll() {
         log.info("Got all users request");
-        return films.getAllFilms();
+        return users.getAllUsers();
     }
 
     @GetMapping(value = "/{id}")
-    public Film getUser(@Valid @PathVariable Integer id) {
+    public User getUser(@Valid @PathVariable Integer id) {
         log.info("Got user request");
-        return films.getFilmById(id);
+        return users.getUserById(id);
     }
 
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film create(@Valid @RequestBody Film film) {
-        log.info("Got user create request: {}", film);
+    public User create(@Valid @RequestBody User user) {
+        log.info("Got user create request: {}", user);
         try {
-            return films.createOrUpdateFilm(Optional.ofNullable(null), film);
-        } catch (WrongFilmData er) {
+            // HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            // ((HttpServletResponse) response).setStatus(201);
+            return users.createOrUpdateUser(Optional.ofNullable(null), user);
+        } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
         }
     }
 
     @PostMapping(value = "/{id}", consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film update(@Valid @PathVariable Integer id, @Valid @RequestBody Film film) {
-        log.info("Got user update request: {} -> {}", id, film);
+    public User update(@Valid @PathVariable Integer id, @Valid @RequestBody User user) {
+        log.info("Got user update request: {} -> {}", id, user);
         try {
-            return films.createOrUpdateFilm(Optional.ofNullable(id), film);
-        } catch (WrongFilmData er) {
+            return users.createOrUpdateUser(Optional.ofNullable(id), user);
+        } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
         }
@@ -59,12 +74,14 @@ public class FilmController {
     ResponseEntity<String> delete(@Valid @PathVariable Integer id) {
         log.info("Got delete user {} request", id);
         try {
-            films.delete(id);
+            users.delete(id);
             return ResponseEntity.noContent().build();
-        } catch (WrongFilmData er) {
+        } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
         }
+        //return new ResponseEntity<>("message"+"Пользователь удален", HttpStatus.OK);
+        //return ResponseEntity.ok().build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
