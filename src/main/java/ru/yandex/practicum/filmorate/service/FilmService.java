@@ -42,37 +42,28 @@ public class FilmService {
         return Optional.ofNullable(existsSameFilm);
     }
 
-    public Film createOrUpdateFilm(Optional<Integer> optionalId, Film film) throws WrongFilmData {
+    public Film createOrUpdateFilm(Film film) throws WrongFilmData {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
+        log.debug("Получен запрос {} ", film.toString());
         Integer filmMapKey;
         Integer filmId = film.getId();
-        //String login = film.getLogin();
         String name = film.getName();
         String doDo = "";
         Optional<Film> existsSameFilm = getFilmByName(name);
 
-
-        if (optionalId.isPresent()) {
+        if (filmId != null) {
             doDo = "обновление фильма";
-            filmMapKey = optionalId.get();
-            log.info("Инициировано {} {}", doDo, filmMapKey);
-            boolean notSameId = !filmMapKey.equals(filmId);
+            log.info("Инициировано {} {}", doDo, filmId);
 
-            if (filmMapKey < 0 || notSameId) {
-                String msg = String.format("Ошибка заполнения поля 'id' %s != %s ", filmMapKey, filmId);
-                log.info(msg);
-                throw new WrongFilmData(msg);
-            }
-
-            if (!films.containsKey(filmMapKey)) {
-                String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmMapKey);
+            if (!films.containsKey(filmId)) {
+                String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmId);
                 log.info(msg);
                 throw new WrongFilmData(msg);
             }
 
             if (existsSameFilm.isPresent()) {
-                if (existsSameFilm.get().getId() != filmMapKey) {
+                if (existsSameFilm.get().getId() != filmId) {
                     String msg = String.format("Не возможно обновить фильм наименование %s уже используется ", name);
                     log.info(msg);
                     throw new WrongFilmData(msg);
@@ -87,11 +78,11 @@ public class FilmService {
                 log.info(msg);
                 throw new WrongFilmData(msg);
             }
-            filmMapKey = ++filmsMapKeyCounter;
-            film.setId(filmsMapKeyCounter);
+            filmId = ++filmsMapKeyCounter;
+            film.setId(filmId);
         }
 
-        films.put(filmMapKey, film);
+        films.put(filmId, film);
         log.info("Операция {} выполнена уcпешно", doDo);
 
         return film;

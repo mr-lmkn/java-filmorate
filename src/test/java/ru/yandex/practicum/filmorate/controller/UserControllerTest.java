@@ -43,7 +43,6 @@ class UserControllerTest {
     @BeforeEach
     void setUp() throws JsonProcessingException {
         user = User.builder()
-                .id(1)
                 .email("xmail@mail.ru")
                 .login("User_1_Login")
                 .name("User-name")
@@ -68,6 +67,7 @@ class UserControllerTest {
                 .expectStatus().isOk();
 
         ArrayList userList = new ArrayList<>();
+        user.setId(1);
         userList.add(user);
 
         webClient
@@ -114,7 +114,6 @@ class UserControllerTest {
 
         // Второй
         User user2 = User.builder()
-                .id(2)
                 .email("xmail@mail.ru")
                 .login("User_2_Login")
                 .name("User-name")
@@ -129,9 +128,10 @@ class UserControllerTest {
                 .expectStatus().isOk();
 
         // Изменяем
+        user2.setId(2);
         user2.setName("User_3_Login");
         webClient
-                .post().uri("/users/2")
+                .post().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(user2))
                 .exchange()
@@ -141,7 +141,7 @@ class UserControllerTest {
         // проверяем тот же логин
         user.setName("User_1_Login");
         webClient
-                .post().uri("/users/2")
+                .post().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(user))
                 .exchange()

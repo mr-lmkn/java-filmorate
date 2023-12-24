@@ -45,7 +45,7 @@ public class UserController {
         log.info("Got user request");
         return users.getUserById(id);
     }
-
+/*
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public User create(@Valid @RequestBody User user) {
         log.info("Got user create request: {}", user);
@@ -58,12 +58,12 @@ public class UserController {
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
         }
     }
-
-    @PostMapping(value = "/{id}", consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public User update(@Valid @PathVariable Integer id, @Valid @RequestBody User user) {
-        log.info("Got user update request: {} -> {}", id, user);
+*/
+    @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
+    public User update(@Valid @RequestBody User user) {
+        log.info("Got create or update user request: {} -> {}", user);
         try {
-            return users.createOrUpdateUser(Optional.ofNullable(id), user);
+            return users.createOrUpdateUser(user);
         } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);

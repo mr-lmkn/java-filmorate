@@ -37,7 +37,6 @@ class FilmControllerTest {
     @BeforeEach
     void setUp() throws JsonProcessingException {
         film = Film.builder()
-                .id(1)
                 .name("Film-name")
                 .description("Descripton")
                 .duration(15)
@@ -61,6 +60,7 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         ArrayList filmList = new ArrayList<>();
+        film.setId(1);
         filmList.add(film);
 
         webClient
@@ -80,7 +80,7 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         webClient
-                .get().uri("/films/1")
+                .get().uri("/films")
                 .exchange()
                 .expectStatus().isOk();
     }
@@ -107,7 +107,6 @@ class FilmControllerTest {
 
         // Второй
         Film film2 = Film.builder()
-                .id(2)
                 .name("Film-name-2")
                 .description("Descripton")
                 .duration(15)
@@ -121,9 +120,10 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         // Изменяем
+        film2.setId(2);
         film2.setName("Film-name-3");
         webClient
-                .post().uri("/films/2")
+                .post().uri("/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(film2))
                 .exchange()
@@ -133,7 +133,7 @@ class FilmControllerTest {
         // проверяем тот же логин
         film2.setName("Film-name");
         webClient
-                .post().uri("/films/2")
+                .post().uri("/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(film2))
                 .exchange()

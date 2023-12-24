@@ -41,7 +41,7 @@ public class UserService {
         return Optional.ofNullable(existsSameUser);
     }
 
-    public User createOrUpdateUser(Optional<Integer> optionalId, User user) throws WrongUserData {
+    public User createOrUpdateUser(User user) throws WrongUserData {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         Integer userMapKey;
@@ -53,26 +53,18 @@ public class UserService {
 
         if (name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
 
-        if (optionalId.isPresent()) {
+        if (userId != null) {
             doDo = "обновление пользователя";
-            userMapKey = optionalId.get();
-            log.info("Инициировано {} {}", doDo, userMapKey);
-            boolean notSameId = !userMapKey.equals(userId);
+            log.info("Инициировано {} {}", doDo, userId);
 
-            if (userMapKey < 0 || notSameId) {
-                String msg = String.format("Ошибка заполнения поля 'id' %s != %s ", userMapKey, userId);
-                log.info(msg);
-                throw new WrongUserData(msg);
-            }
-
-            if (!users.containsKey(userMapKey)) {
-                String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userMapKey);
+            if (!users.containsKey(userId)) {
+                String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userId);
                 log.info(msg);
                 throw new WrongUserData(msg);
             }
 
             if (existsSameUser.isPresent()) {
-                if (existsSameUser.get().getId() != userMapKey) {
+                if (existsSameUser.get().getId() != userId) {
                     String msg = String.format("Не возможно обновить пользователя логин %s занят", login);
                     log.info(msg);
                     throw new WrongUserData(msg);
@@ -87,11 +79,11 @@ public class UserService {
                 log.info(msg);
                 throw new WrongUserData(msg);
             }
-            userMapKey = ++usersMapKeyCounter;
-            user.setId(usersMapKeyCounter);
+            userId = ++usersMapKeyCounter;
+            user.setId(userId);
         }
 
-        users.put(userMapKey, user);
+        users.put(userId, user);
         log.info("Операция {} выполнена уcпешно", doDo);
 
         return user;

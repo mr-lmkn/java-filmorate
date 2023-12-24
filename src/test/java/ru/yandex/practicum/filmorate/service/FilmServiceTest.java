@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
+@Slf4j
 class FilmServiceTest {
 
     Film film;
@@ -40,38 +42,38 @@ class FilmServiceTest {
 
     @Test
     public void createFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(Optional.ofNullable(null), film);
+        Film isfilm = filmService.createOrUpdateFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
 
     @Test
     public void getFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(Optional.ofNullable(null), film);
+        Film isfilm = filmService.createOrUpdateFilm(film);
         Film filmOptional = filmService.getFilmById(1);
         Assertions.assertNotNull(filmOptional);
     }
 
     @Test
     public void getAllFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(Optional.ofNullable(null), film);
+        Film isfilm = filmService.createOrUpdateFilm(film);
         List<Film> filmList = filmService.getAllFilms();
         Assertions.assertNotNull(filmList);
     }
 
     @Test
     public void updateFilm() throws WrongFilmData {
-        Film isfilm1 = filmService.createOrUpdateFilm(Optional.ofNullable(null), film);
-        film.setName("sdfsdfsdfsdf");
-        Film isfilm2 = filmService.createOrUpdateFilm(Optional.ofNullable(1), film);
+        Film isfilm1 = filmService.createOrUpdateFilm(film);
+        isfilm1.setName("sdfsdfsdfsdf");
+        log.info(filmService.getAllFilms().toString());
+        Film isfilm2 = filmService.createOrUpdateFilm(isfilm1);
 
-        assertEquals(film.getName(), isfilm2.getName(), "Фильм не обновлен");
+        assertEquals(isfilm1.getName(), isfilm2.getName(), "Фильм не обновлен");
     }
 
     @Test
     public void wrongDate() throws WrongFilmData {
         film.setReleaseDate(LocalDate.of(1, 01, 01));
-        System.out.println(film);
-        Film isfilm = filmService.createOrUpdateFilm(Optional.ofNullable(null), film);
+        Film isfilm = filmService.createOrUpdateFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
 

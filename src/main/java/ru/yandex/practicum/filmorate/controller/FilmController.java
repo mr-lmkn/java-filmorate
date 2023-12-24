@@ -34,21 +34,10 @@ public class FilmController {
     }
 
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film create(@Valid @RequestBody Film film) {
-        log.info("Got user create request: {}", film);
+    public Film update(@Valid @RequestBody Film film) {
+        log.info("Got create or update film request: {} ", film);
         try {
-            return films.createOrUpdateFilm(Optional.ofNullable(null), film);
-        } catch (WrongFilmData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        }
-    }
-
-    @PostMapping(value = "/{id}", consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film update(@Valid @PathVariable Integer id, @Valid @RequestBody Film film) {
-        log.info("Got user update request: {} -> {}", id, film);
-        try {
-            return films.createOrUpdateFilm(Optional.ofNullable(id), film);
+            return films.createOrUpdateFilm(film);
         } catch (WrongFilmData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
@@ -57,7 +46,7 @@ public class FilmController {
 
     @DeleteMapping(value = "/{id}", produces = "application/json;")
     ResponseEntity<String> delete(@Valid @PathVariable Integer id) {
-        log.info("Got delete user {} request", id);
+        log.info("Got delete film {} request", id);
         try {
             films.delete(id);
             return ResponseEntity.noContent().build();
