@@ -49,7 +49,7 @@ class FilmServiceTest {
     @Test
     public void getFilm() throws WrongFilmData {
         Film isfilm = filmService.createOrUpdateFilm(film);
-        Film filmOptional = filmService.getFilmById(1);
+        Film filmOptional = filmService.getFilmById(0);
         Assertions.assertNotNull(filmOptional);
     }
 

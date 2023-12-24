@@ -21,9 +21,9 @@ public class FilmController {
 
     FilmService films = new FilmService();
 
-    @GetMapping(produces = "application/json;")
+    @GetMapping()
     public List<Film> getAll() {
-        log.info("Got all users request");
+        log.info("Got all films request");
         return films.getAllFilms();
     }
 

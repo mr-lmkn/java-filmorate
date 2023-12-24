@@ -60,7 +60,7 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         ArrayList filmList = new ArrayList<>();
-        film.setId(1);
+        film.setId(0);
         filmList.add(film);
 
         webClient
@@ -152,7 +152,7 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         webClient
-                .delete().uri("/films/1")
+                .delete().uri("/films/0")
                 .exchange()
                 .expectStatus()
                 .isEqualTo(204);

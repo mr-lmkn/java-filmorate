@@ -34,7 +34,7 @@ public class UserController {
 
     UserService users = new UserService();
 
-    @GetMapping(produces = "application/json;")
+    @GetMapping()
     public List<User> getAll() {
         log.info("Got all users request");
         return users.getAllUsers();

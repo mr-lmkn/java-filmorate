@@ -56,13 +56,13 @@ public class UserService {
         if (userId != null) {
             doDo = "обновление пользователя";
             log.info("Инициировано {} {}", doDo, userId);
-
+/*
             if (!users.containsKey(userId)) {
                 String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userId);
                 log.info(msg);
                 throw new WrongUserData(msg);
             }
-
+*/
             if (existsSameUser.isPresent()) {
                 if (existsSameUser.get().getId() != userId) {
                     String msg = String.format("Не возможно обновить пользователя логин %s занят", login);
@@ -79,8 +79,9 @@ public class UserService {
                 log.info(msg);
                 throw new WrongUserData(msg);
             }
-            userId = ++usersMapKeyCounter;
+            userId = usersMapKeyCounter;
             user.setId(userId);
+            usersMapKeyCounter++;
         }
 
         users.put(userId, user);

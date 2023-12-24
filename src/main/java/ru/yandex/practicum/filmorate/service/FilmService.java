@@ -13,7 +13,7 @@ public class FilmService {
     private static Integer filmsMapKeyCounter = 0;
 
     public List<Film> getAllFilms() {
-        return  new ArrayList<>(films.values());
+        return new ArrayList<>(films.values());
     }
 
     public Film getFilmById(Integer id) {
@@ -55,13 +55,13 @@ public class FilmService {
         if (filmId != null) {
             doDo = "обновление фильма";
             log.info("Инициировано {} {}", doDo, filmId);
-
+/*
             if (!films.containsKey(filmId)) {
                 String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmId);
                 log.info(msg);
                 throw new WrongFilmData(msg);
             }
-
+*/
             if (existsSameFilm.isPresent()) {
                 if (existsSameFilm.get().getId() != filmId) {
                     String msg = String.format("Не возможно обновить фильм наименование %s уже используется ", name);
@@ -78,8 +78,10 @@ public class FilmService {
                 log.info(msg);
                 throw new WrongFilmData(msg);
             }
-            filmId = ++filmsMapKeyCounter;
+            filmId = filmsMapKeyCounter;
             film.setId(filmId);
+            filmsMapKeyCounter++;
+
         }
 
         films.put(filmId, film);
