@@ -41,7 +41,36 @@ public class UserService {
         return Optional.ofNullable(existsSameUser);
     }
 
-    public User createOrUpdateUser(User user) throws WrongUserData {
+    public User createUser(User user) throws WrongUserData {
+        // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
+        // Вместо этого класса или пихать это в "сервис"
+        Integer userMapKey;
+        Integer userId = user.getId();
+        String login = user.getLogin();
+        String name = user.getName();
+        String doDo = "";
+        Optional<User> existsSameUser = getUserByLogin(login);
+
+        if (name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
+
+        doDo = "создание пользователя";
+        log.info("Инициировано {}", doDo);
+        if (existsSameUser.isPresent()) {
+            String msg = String.format("Не возможно создать пользователя логин %s занят ", login);
+            log.info(msg);
+            throw new WrongUserData(msg);
+        }
+        userId = usersMapKeyCounter;
+        user.setId(userId);
+        usersMapKeyCounter++;
+
+        users.put(userId, user);
+        log.info("Операция {} выполнена уcпешно", doDo);
+
+        return user;
+    }
+
+    public User updateUser(User user) throws WrongUserData {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         Integer userMapKey;
@@ -56,13 +85,13 @@ public class UserService {
         if (userId != null) {
             doDo = "обновление пользователя";
             log.info("Инициировано {} {}", doDo, userId);
-/*
+
             if (!users.containsKey(userId)) {
                 String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userId);
                 log.info(msg);
                 throw new WrongUserData(msg);
             }
-*/
+
             if (existsSameUser.isPresent()) {
                 if (existsSameUser.get().getId() != userId) {
                     String msg = String.format("Не возможно обновить пользователя логин %s занят", login);
@@ -71,23 +100,16 @@ public class UserService {
                 }
             }
 
-        } else {
-            doDo = "создание пользователя";
-            log.info("Инициировано {}", doDo);
-            if (existsSameUser.isPresent()) {
-                String msg = String.format("Не возможно создать пользователя логин %s занят ", login);
-                log.info(msg);
-                throw new WrongUserData(msg);
-            }
-            userId = usersMapKeyCounter;
-            user.setId(userId);
-            usersMapKeyCounter++;
+            users.put(userId, user);
+            log.info("Операция {} выполнена уcпешно", doDo);
+
+            return user;
         }
 
-        users.put(userId, user);
-        log.info("Операция {} выполнена уcпешно", doDo);
+        String msg = String.format("Не указан 'id' %s. Обновление не возможно.", userId);
+        log.info(msg);
+        throw new WrongUserData(msg);
 
-        return user;
     }
 
     public void delete(Integer id) throws WrongUserData {

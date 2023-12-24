@@ -42,7 +42,32 @@ public class FilmService {
         return Optional.ofNullable(existsSameFilm);
     }
 
-    public Film createOrUpdateFilm(Film film) throws WrongFilmData {
+    public Film createFilm(Film film) throws WrongFilmData {
+        log.debug("Получен запрос {} ", film.toString());
+        Integer filmMapKey;
+        Integer filmId = film.getId();
+        String name = film.getName();
+        String doDo = "";
+        Optional<Film> existsSameFilm = getFilmByName(name);
+
+        doDo = "создание фильма";
+        log.info("Инициировано {}", doDo);
+        if (existsSameFilm.isPresent()) {
+            String msg = String.format("Не возможно создать фильма логин %s занят ", name);
+            log.info(msg);
+            throw new WrongFilmData(msg);
+        }
+        filmId = filmsMapKeyCounter;
+        film.setId(filmId);
+        filmsMapKeyCounter++;
+
+        films.put(filmId, film);
+        log.info("Операция {} выполнена уcпешно", doDo);
+
+        return film;
+    }
+
+    public Film updateFilm(Film film) throws WrongFilmData {
         // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
         // Вместо этого класса или пихать это в "сервис"
         log.debug("Получен запрос {} ", film.toString());
@@ -55,13 +80,13 @@ public class FilmService {
         if (filmId != null) {
             doDo = "обновление фильма";
             log.info("Инициировано {} {}", doDo, filmId);
-/*
+
             if (!films.containsKey(filmId)) {
                 String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmId);
                 log.info(msg);
                 throw new WrongFilmData(msg);
             }
-*/
+
             if (existsSameFilm.isPresent()) {
                 if (existsSameFilm.get().getId() != filmId) {
                     String msg = String.format("Не возможно обновить фильм наименование %s уже используется ", name);
@@ -70,24 +95,15 @@ public class FilmService {
                 }
             }
 
-        } else {
-            doDo = "создание фильма";
-            log.info("Инициировано {}", doDo);
-            if (existsSameFilm.isPresent()) {
-                String msg = String.format("Не возможно создать фильма логин %s занят ", name);
-                log.info(msg);
-                throw new WrongFilmData(msg);
-            }
-            filmId = filmsMapKeyCounter;
-            film.setId(filmId);
-            filmsMapKeyCounter++;
+            films.put(filmId, film);
+            log.info("Операция {} выполнена уcпешно", doDo);
 
+            return film;
         }
 
-        films.put(filmId, film);
-        log.info("Операция {} выполнена уcпешно", doDo);
-
-        return film;
+        String msg = String.format("Не указан 'id' %s. Обновление не возможно.", filmId);
+        log.info(msg);
+        throw new WrongFilmData(msg);
     }
 
 

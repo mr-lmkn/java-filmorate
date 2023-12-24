@@ -45,25 +45,26 @@ public class UserController {
         log.info("Got user request");
         return users.getUserById(id);
     }
-/*
+
+
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public User create(@Valid @RequestBody User user) {
         log.info("Got user create request: {}", user);
         try {
             // HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             // ((HttpServletResponse) response).setStatus(201);
-            return users.createOrUpdateUser(Optional.ofNullable(null), user);
+            return users.createUser(user);
         } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);
         }
     }
-*/
-    @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
+
+    @PutMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public User update(@Valid @RequestBody User user) {
         log.info("Got create or update user request: {} -> {}", user);
         try {
-            return users.createOrUpdateUser(user);
+            return users.updateUser(user);
         } catch (WrongUserData er) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, er.getMessage(), er);

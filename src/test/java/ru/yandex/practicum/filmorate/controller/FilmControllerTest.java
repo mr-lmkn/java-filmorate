@@ -26,7 +26,7 @@ import java.util.ArrayList;
 class FilmControllerTest {
 
     /**
-     * Похоже, это делать не нудно было. НО так или иначе есть вопрос 133-я строка
+     * Похоже, это делать не нудно было. Но хочется потренироваться
      */
 
     Film film;
@@ -96,6 +96,16 @@ class FilmControllerTest {
     }
 
     @Test
+    void cantUpdateTest(@Autowired WebTestClient webClient) {
+        webClient
+                .put().uri("/films")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(film))
+                .exchange()
+                .expectStatus().is4xxClientError();
+    }
+
+    @Test
     void updateTest(@Autowired WebTestClient webClient) {
         // Создаем
         webClient
@@ -107,6 +117,7 @@ class FilmControllerTest {
 
         // Второй
         Film film2 = Film.builder()
+                .id(1)
                 .name("Film-name-2")
                 .description("Descripton")
                 .duration(15)
@@ -120,10 +131,9 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         // Изменяем
-        film2.setId(2);
         film2.setName("Film-name-3");
         webClient
-                .post().uri("/films")
+                .put().uri("/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(film2))
                 .exchange()
@@ -133,13 +143,12 @@ class FilmControllerTest {
         // проверяем тот же логин
         film2.setName("Film-name");
         webClient
-                .post().uri("/films")
+                .put().uri("/films")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(film2))
                 .exchange()
                 .expectStatus()
                 .is4xxClientError();
-
     }
 
     @Test
@@ -157,27 +166,5 @@ class FilmControllerTest {
                 .expectStatus()
                 .isEqualTo(204);
     }
-
-
-    /*Еще один способ
-    @Test
-    public void dateReleaseTest() throws Exception {
-        MockHttpServletRequestBuilder mockMvcRequestBuilders;
-
-        String tJson = "{\n" +
-                "        \"id\":  \"1\",\n" +
-                "        \"name\": \"sfsafdasdfasdf\",\n" +
-                "        \"releaseDate\": \"1623-12-01\",\n" +
-                "        \"duration\":\"14\"\n" +
-                "}";
-
-        mockMvcRequestBuilders = MockMvcRequestBuilders.post("/films")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(tJson);
-
-        mockMvc.perform(mockMvcRequestBuilders)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest()).andReturn();
-    }
-    */
 
 }

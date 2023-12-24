@@ -4,7 +4,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import ru.yandex.practicum.filmorate.validation.MinReleaseDate;
+import ru.yandex.practicum.filmorate.validation.MinReleaseDateConstraint;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 @EqualsAndHashCode
-//@Valid
+//@Validated
 @AllArgsConstructor
 @NoArgsConstructor
 public class Film {
@@ -42,7 +42,7 @@ public class Film {
     //дата релиза
     @Past
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @MinReleaseDate
+    @MinReleaseDateConstraint
     LocalDate releaseDate;
 
     // продолжительность фильма

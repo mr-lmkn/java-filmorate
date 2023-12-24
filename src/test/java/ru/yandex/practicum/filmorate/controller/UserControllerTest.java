@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,14 +32,12 @@ import java.util.ArrayList;
 //@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserControllerTest {
 
-    /**
-     * Похоже, это делать не нудно было. НО так или иначе есть вопрос 133-я строка
-     */
-
     User user;
     private MockMvc mockMvc;
     private UserController controller;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -131,7 +130,7 @@ class UserControllerTest {
         user2.setId(1);
         user2.setName("User_3_Login");
         webClient
-                .post().uri("/users")
+                .put().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(user2))
                 .exchange()
@@ -141,13 +140,12 @@ class UserControllerTest {
         // проверяем тот же логин
         user.setName("User_1_Login");
         webClient
-                .post().uri("/users")
+                .put().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(user))
                 .exchange()
                 .expectStatus()
                 .is4xxClientError();
-
     }
 
     @Test
@@ -171,14 +169,8 @@ class UserControllerTest {
     @Test
     public void emailTest() throws Exception {
         MockHttpServletRequestBuilder mockMvcRequestBuilders;
-
-        String tJson = "{\n" +
-                "        \"id\":  \"1\",\n" +
-                "        \"email\": \"hkjsdfmail.ru\",\n" +
-                "        \"login\": \"xsdfcsdfdg1\",\n" +
-                "        \"name\": \",m,\",\n" +
-                "        \"birthday\": \"2023-12-01\"\n" +
-                "}";
+        user.setEmail("hkjsdfmail.ru");
+        String tJson = objectMapper.writeValueAsString(user);
 
         mockMvcRequestBuilders = MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -191,14 +183,9 @@ class UserControllerTest {
     @Test
     public void birthDayTest() throws Exception {
         MockHttpServletRequestBuilder mockMvcRequestBuilders;
+        user.setBirthday(LocalDate.of(2026, 01, 01));
 
-        String tJson = "{\n" +
-                "        \"id\":  \"1\",\n" +
-                "        \"email\": \"hkjsd@fmail.ru\",\n" +
-                "        \"login\": \"xsdfcsdfdg1\",\n" +
-                "        \"name\": \",m,\",\n" +
-                "        \"birthday\": \"2024-12-01\"\n" +
-                "}";
+        String tJson = objectMapper.writeValueAsString(user);
 
         mockMvcRequestBuilders = MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)

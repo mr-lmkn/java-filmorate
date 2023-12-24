@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,30 +41,30 @@ class FilmServiceTest {
 
     @Test
     public void createFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(film);
+        Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
 
     @Test
     public void getFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(film);
+        Film isfilm = filmService.createFilm(film);
         Film filmOptional = filmService.getFilmById(0);
         Assertions.assertNotNull(filmOptional);
     }
 
     @Test
     public void getAllFilm() throws WrongFilmData {
-        Film isfilm = filmService.createOrUpdateFilm(film);
+        Film isfilm = filmService.createFilm(film);
         List<Film> filmList = filmService.getAllFilms();
         Assertions.assertNotNull(filmList);
     }
 
     @Test
     public void updateFilm() throws WrongFilmData {
-        Film isfilm1 = filmService.createOrUpdateFilm(film);
+        Film isfilm1 = filmService.createFilm(film);
         isfilm1.setName("sdfsdfsdfsdf");
         log.info(filmService.getAllFilms().toString());
-        Film isfilm2 = filmService.createOrUpdateFilm(isfilm1);
+        Film isfilm2 = filmService.updateFilm(isfilm1);
 
         assertEquals(isfilm1.getName(), isfilm2.getName(), "Фильм не обновлен");
     }
@@ -73,7 +72,7 @@ class FilmServiceTest {
     @Test
     public void wrongDate() throws WrongFilmData {
         film.setReleaseDate(LocalDate.of(1, 01, 01));
-        Film isfilm = filmService.createOrUpdateFilm(film);
+        Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
 
