@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
 import ru.yandex.practicum.filmorate.exception.WrongFilmData;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -60,7 +61,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void updateFilm() throws WrongFilmData {
+    public void updateFilm() throws WrongFilmData, NoDataFoubd {
         Film isfilm1 = filmService.createFilm(film);
         isfilm1.setName("sdfsdfsdfsdf");
         log.info(filmService.getAllFilms().toString());
