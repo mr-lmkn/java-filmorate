@@ -70,13 +70,13 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NoDataFoundException.class)
-    public String NoDataFoundException(NoDataFoundException ex) {
+    public String noDataFoundException(NoDataFoundException ex) {
         return ex.getMessage();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongUserDataException.class)
-    public String WrongUserDataException(WrongUserDataException e) {
+    public String wrongUserDataException(WrongUserDataException e) {
         return e.getMessage();
     }
 

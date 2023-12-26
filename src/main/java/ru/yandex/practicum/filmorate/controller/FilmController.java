@@ -71,13 +71,13 @@ public class FilmController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NoDataFoundException.class)
-    public String NoDataFoundException(NoDataFoundException ex) {
+    public String noDataFoundException(NoDataFoundException ex) {
         return ex.getMessage();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongFilmDataException.class)
-    public String WrongFilmDataException(WrongFilmDataException e) {
+    public String wrongFilmDataException(WrongFilmDataException e) {
         return e.getMessage();
     }
 }
