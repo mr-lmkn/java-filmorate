@@ -10,13 +10,11 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class MinReleaseDateConstraintValidator implements ConstraintValidator<MinReleaseDateConstraint, LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    // @Value("${ru.yandex.practicum.filmorate.validation.minReleaseDate}") -- Тест валится, не видит конфига
-    // Приглось отключить. Почему так ? гм.
-    String minReleaseDate = "1895-12-28";
+    private String minReleaseDate = "1895-12-28";
 
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
-        log.debug("Setting 'ru.yandex.practicum.filmorate.validation.minReleaseDate' is set to {}", minReleaseDate);
+        log.debug("Setting 'minReleaseDate' is set to {}", minReleaseDate);
         if (value != null) {
             log.debug("Compare {} to {}", minReleaseDate, value.toString());
             return value.isAfter(LocalDate.parse(minReleaseDate, formatter));

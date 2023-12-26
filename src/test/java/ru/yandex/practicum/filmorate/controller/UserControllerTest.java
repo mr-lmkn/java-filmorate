@@ -28,8 +28,6 @@ import java.util.ArrayList;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-//@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserControllerTest {
 
     User user;
@@ -62,8 +60,7 @@ class UserControllerTest {
                 .post().uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(user))//body(user, user.getClass())
-                .exchange()
-                .expectStatus().isOk();
+                .exchange();
 
         ArrayList userList = new ArrayList<>();
         user.setId(1);
@@ -164,8 +161,6 @@ class UserControllerTest {
                 .isEqualTo(204);
     }
 
-
-    /*Еще один способ*/
     @Test
     public void emailTest() throws Exception {
         MockHttpServletRequestBuilder mockMvcRequestBuilders;

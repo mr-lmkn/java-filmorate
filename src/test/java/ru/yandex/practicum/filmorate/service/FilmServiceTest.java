@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
-import ru.yandex.practicum.filmorate.exception.WrongFilmData;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -41,27 +41,27 @@ class FilmServiceTest {
     }
 
     @Test
-    public void createFilm() throws WrongFilmData {
+    public void createFilm() throws WrongFilmDataException {
         Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
 
     @Test
-    public void getFilm() throws WrongFilmData {
+    public void getFilm() throws WrongFilmDataException {
         Film isfilm = filmService.createFilm(film);
         Film filmOptional = filmService.getFilmById(1);
         Assertions.assertNotNull(filmOptional);
     }
 
     @Test
-    public void getAllFilm() throws WrongFilmData {
+    public void getAllFilm() throws WrongFilmDataException {
         Film isfilm = filmService.createFilm(film);
         List<Film> filmList = filmService.getAllFilms();
         Assertions.assertNotNull(filmList);
     }
 
     @Test
-    public void updateFilm() throws WrongFilmData, NoDataFoubd {
+    public void updateFilm() throws WrongFilmDataException, NoDataFoundException {
         Film isfilm1 = filmService.createFilm(film);
         isfilm1.setName("sdfsdfsdfsdf");
         log.info(filmService.getAllFilms().toString());
@@ -71,7 +71,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void wrongDate() throws WrongFilmData {
+    public void wrongDate() throws WrongFilmDataException {
         film.setReleaseDate(LocalDate.of(1, 01, 01));
         Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");

@@ -25,14 +25,9 @@ import java.util.ArrayList;
 @RunWith(SpringRunner.class)
 class FilmControllerTest {
 
-    /**
-     * Похоже, это делать не нудно было. Но хочется потренироваться
-     */
-
     Film film;
     private MockMvc mockMvc;
     private FilmController controller;
-
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -139,16 +134,6 @@ class FilmControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk().expectBody(Film.class).isEqualTo(film2);
-
-        // проверяем тот же логин
-        film2.setName("Film-name");
-        webClient
-                .put().uri("/films")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(film2))
-                .exchange()
-                .expectStatus()
-                .is4xxClientError();
     }
 
     @Test

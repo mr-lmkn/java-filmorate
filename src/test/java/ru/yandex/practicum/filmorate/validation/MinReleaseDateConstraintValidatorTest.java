@@ -17,12 +17,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
-//@SpringBootTest
-//@TestPropertySource("classpath:testing.properties") Непойму, почему не хочет брать насрокйи тестовые?
-// - из-за контекста?
 @RunWith(MockitoJUnitRunner.class)
 class MinReleaseDateConstraintValidatorTest {
-    /* еще один вариант теста валидации*/
 
     @Mock
     MinReleaseDateConstraintValidator minReleaseDateConstraintValidator = new MinReleaseDateConstraintValidator();

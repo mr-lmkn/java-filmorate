@@ -3,19 +3,17 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import ru.yandex.practicum.filmorate.validation.SolidText;
+import ru.yandex.practicum.filmorate.validation.UserNameConstraint;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-/**
- * User
- */
 @Data
 @Builder
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
+@UserNameConstraint
 public class User {
 
     //целочисленный идентификатор
@@ -25,12 +23,15 @@ public class User {
 
     //электронная почта
     @NotBlank(message = "Поле 'E-mail' не заполнено")
-    @Email(message = "Поле 'E-mail' не содержит символ '@'")
+    @Email(regexp = "^[\\w!#$%&amp;'*+/=?`{|}~^-]+"
+            + "(?:\\.[\\w!#$%&amp;'*+/=?`{|}~^-]+)*@"
+            + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$"
+            , message = "Поле e-mail должно содержать валидный адрес")
     private String email;
 
     // логин пользователя
-    @NotBlank(message = "Поле 'Login' не заполнено")
-    @SolidText
+    @NotBlank(message = "Поле 'Login' не может быть пустым")
+    @Pattern(regexp = ".*[^\\h]", message = "Поле содержит пробелы")
     private String login;
 
     // имя для отображения

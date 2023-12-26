@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
-import ru.yandex.practicum.filmorate.exception.WrongFilmData;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -20,55 +20,40 @@ import java.util.*;
 @Slf4j
 public class FilmController {
 
-    FilmService films = new FilmService();
+    private FilmService films = new FilmService();
 
-    @GetMapping()
+    @GetMapping(produces = "application/json;")
     public List<Film> getAll() {
         log.info("Got all films request");
         return films.getAllFilms();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json;")
     public Film getUser(@Valid @PathVariable Integer id) {
         log.info("Got user request");
         return films.getFilmById(id);
     }
 
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film add(@Valid @RequestBody Film film) {
+    public Film add(@Valid @RequestBody Film film)
+            throws WrongFilmDataException {
         log.info("Got create film request: {} ", film);
-        try {
-            return films.createFilm(film);
-        } catch (WrongFilmData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        }
+        return films.createFilm(film);
     }
 
     @PutMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public Film update(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film)
+            throws WrongFilmDataException, NoDataFoundException {
         log.info("Got update film request: {} ", film);
-        try {
-            return films.updateFilm(film);
-        } catch (WrongFilmData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        } catch (NoDataFoubd e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-        }
+        return films.updateFilm(film);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json;")
-    ResponseEntity<String> delete(@Valid @PathVariable Integer id) {
+    public ResponseEntity<String> delete(@Valid @PathVariable Integer id)
+            throws WrongFilmDataException {
         log.info("Got delete film {} request", id);
-        try {
-            films.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (WrongFilmData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        }
+        films.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -84,4 +69,15 @@ public class FilmController {
         return errors;
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NoDataFoundException.class)
+    public String NoDataFoundException(NoDataFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(WrongFilmDataException.class)
+    public String WrongFilmDataException(WrongFilmDataException e) {
+        return new String(e.getMessage());
+    }
 }

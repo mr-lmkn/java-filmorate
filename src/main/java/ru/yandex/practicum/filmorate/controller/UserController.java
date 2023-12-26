@@ -6,34 +6,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
-import ru.yandex.practicum.filmorate.exception.WrongUserData;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.*;
 
-/**
- * <H1>UserController<H1/>
- * создание пользователя;
- * обновление пользователя;
- * получение списка всех пользователей.
- * <p>
- * электронная почта не может быть пустой и должна содержать символ @;
- * логин не может быть пустым и содержать пробелы;
- * имя для отображения может быть пустым — в таком случае будет использован логин;
- * дата рождения не может быть в будущем.
- */
-
 @RestController
-//@ControllerAdvice extends ResponseEntityExceptionHandler
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    UserService users = new UserService();
+    private UserService users = new UserService();
 
     @GetMapping()
     public List<User> getAll() {
@@ -47,47 +33,26 @@ public class UserController {
         return users.getUserById(id);
     }
 
-
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public User create(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user)
+            throws WrongUserDataException {
         log.info("Got user create request: {}", user);
-        try {
-            // HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-            // ((HttpServletResponse) response).setStatus(201);
-            return users.createUser(user);
-        } catch (WrongUserData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        }
+        return users.createUser(user);
     }
 
     @PutMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
-    public User update(@Valid @RequestBody User user) {
-        log.info("Got update user request: {} -> {}", user);
-        try {
-            return users.updateUser(user);
-        } catch (WrongUserData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        } catch (
-                NoDataFoubd e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-        }
+    public User update(@Valid @RequestBody User user)
+            throws WrongUserDataException, NoDataFoundException {
+        log.info("Got update user request: {}", user);
+        return users.updateUser(user);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json;")
-    ResponseEntity<String> delete(@Valid @PathVariable Integer id) {
+    public ResponseEntity<String> delete(@Valid @PathVariable Integer id)
+            throws WrongUserDataException {
         log.info("Got delete user {} request", id);
-        try {
-            users.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (WrongUserData er) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, er.getMessage(), er);
-        }
-        //return new ResponseEntity<>("message"+"Пользователь удален", HttpStatus.OK);
-        //return ResponseEntity.ok().build();
+        users.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -101,6 +66,18 @@ public class UserController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NoDataFoundException.class)
+    public String NoDataFoundException(NoDataFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(WrongUserDataException.class)
+    public String WrongUserDataException(WrongUserDataException e) {
+        return new String(e.getMessage());
     }
 
 }

@@ -11,17 +11,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 
-/**
- * Film.
- * название не может быть пустым;
- * максимальная длина описания — 200 символов;
- * дата релиза — не раньше 28 декабря 1895 года;
- * продолжительность фильма должна быть положительной.
- */
 @Data
 @Builder
 @EqualsAndHashCode
-//@Validated
 @AllArgsConstructor
 @NoArgsConstructor
 public class Film {
@@ -29,24 +21,24 @@ public class Film {
     // целочисленный идентификатор
     @Min(value = 1, message = "id должен быть > 1")
     @Nullable
-    Integer id;
+    private Integer id;
 
     // название
     @NotBlank(message = "название не может быть пустым")
-    String name;
+    private String name;
 
     // описание
     @Length(max = 200, message = "максимальная длина описания — 200 символов")
-    String description;
+    private String description;
 
     //дата релиза
     @Past
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @MinReleaseDateConstraint
-    LocalDate releaseDate;
+    private LocalDate releaseDate;
 
     // продолжительность фильма
     @Min(value = 1, message = "продолжительность фильма должна быть положительной.")
-    Integer duration;
+    private Integer duration;
 
 }

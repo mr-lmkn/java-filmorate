@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
-import ru.yandex.practicum.filmorate.exception.WrongFilmData;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class FilmService {
@@ -25,57 +28,18 @@ public class FilmService {
         return null;
     }
 
-    public Optional<Film> getFilmByName(String name) {
-        // Думаю, эта функция будет заменена, хотел все-таки вернуть нулл из MAP. Получилось... Гм. мдеее.
-        // Надобыло брать LIST
-        // Надо бы посимпатичнее это вот написать
-        Film existsSameFilm;
-        try {
-            existsSameFilm = films.entrySet()
-                    .stream()
-                    .filter(a -> Objects.equals(a.getValue().getName(), name))
-                    .findFirst()
-                    .get()
-                    .getValue();
-        } catch (NoSuchElementException e) {
-            existsSameFilm = null;
-        }
-        return Optional.ofNullable(existsSameFilm);
-    }
-
-    public Film createFilm(Film film) throws WrongFilmData {
-        log.debug("Получен запрос {} ", film.toString());
-        Integer filmMapKey;
-        Integer filmId = film.getId();
-        String name = film.getName();
-        String doDo = "";
-        Optional<Film> existsSameFilm = getFilmByName(name);
-
-        doDo = "создание фильма";
-        log.info("Инициировано {}", doDo);
-        if (existsSameFilm.isPresent()) {
-            String msg = String.format("Не возможно создать фильма логин %s занят ", name);
-            log.info(msg);
-            throw new WrongFilmData(msg);
-        }
-        filmId = ++filmsMapKeyCounter;
+    public Film createFilm(Film film) throws WrongFilmDataException {
+        Integer filmId = ++filmsMapKeyCounter;
+        log.info("Инициировано создание фильма");
         film.setId(filmId);
-
         films.put(filmId, film);
-        log.info("Операция {} выполнена уcпешно", doDo);
-
+        log.info("Операция создание фильма выполнена уcпешно");
         return film;
     }
 
-    public Film updateFilm(Film film) throws WrongFilmData, NoDataFoubd {
-        // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
-        // Вместо этого класса или пихать это в "сервис"
-        log.debug("Получен запрос {} ", film.toString());
-        Integer filmMapKey;
+    public Film updateFilm(Film film) throws WrongFilmDataException, NoDataFoundException {
         Integer filmId = film.getId();
-        String name = film.getName();
-        String doDo = "";
-        Optional<Film> existsSameFilm = getFilmByName(name);
+        String doDo;
 
         if (filmId != null) {
             doDo = "обновление фильма";
@@ -84,15 +48,7 @@ public class FilmService {
             if (!films.containsKey(filmId)) {
                 String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", filmId);
                 log.info(msg);
-                throw new NoDataFoubd(msg);
-            }
-
-            if (existsSameFilm.isPresent()) {
-                if (existsSameFilm.get().getId() != filmId) {
-                    String msg = String.format("Не возможно обновить фильм наименование %s уже используется ", name);
-                    log.info(msg);
-                    throw new WrongFilmData(msg);
-                }
+                throw new NoDataFoundException(msg);
             }
 
             films.put(filmId, film);
@@ -103,15 +59,14 @@ public class FilmService {
 
         String msg = String.format("Не указан 'id' %s. Обновление не возможно.", filmId);
         log.info(msg);
-        throw new WrongFilmData(msg);
+        throw new WrongFilmDataException(msg);
     }
 
-
-    public void delete(Integer id) throws WrongFilmData {
+    public void delete(Integer id) throws WrongFilmDataException {
         if (!films.containsKey(id)) {
             String msg = String.format("Нет фильма с ID %s", id);
             log.info(msg);
-            throw new WrongFilmData(msg);
+            throw new WrongFilmDataException(msg);
         } else {
             films.remove(id);
             log.info("Фильм {} удален", id);

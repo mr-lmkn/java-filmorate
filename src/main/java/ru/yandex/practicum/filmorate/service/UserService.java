@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.NoDataFoubd;
-import ru.yandex.practicum.filmorate.exception.WrongUserData;
+import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class UserService {
@@ -24,62 +27,19 @@ public class UserService {
         return null;
     }
 
-    public Optional<User> getUserByLogin(String login) {
-        // Думаю, эта функция будет заменена, хотел все-таки вернуть нулл из MAP. Получилось... Гм. мдеее.
-        // Надобыло брать LIST
-        // Надо бы посимпатичнее это вот написать
-        User existsSameUser;
-        try {
-            existsSameUser = users.entrySet()
-                    .stream()
-                    .filter(a -> Objects.equals(a.getValue().getLogin(), login))
-                    .findFirst()
-                    .get()
-                    .getValue();
-        } catch (NoSuchElementException e) {
-            existsSameUser = null;
-        }
-        return Optional.ofNullable(existsSameUser);
-    }
-
-    public User createUser(User user) throws WrongUserData {
-        // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
-        // Вместо этого класса или пихать это в "сервис"
-        Integer userId;// = user.getId();
-        String login = user.getLogin();
-        String name = user.getName();
-        String doDo;
-        Optional<User> existsSameUser = getUserByLogin(login);
-
-        if (name == null || name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
-
-        doDo = "создание пользователя";
+    public User createUser(User user) throws WrongUserDataException {
+        Integer userId = ++usersMapKeyCounter;
+        String doDo = "создание пользователя";
         log.info("Инициировано {}", doDo);
-        if (existsSameUser.isPresent()) {
-            String msg = String.format("Не возможно создать пользователя логин %s занят ", login);
-            log.info(msg);
-            throw new WrongUserData(msg);
-        }
-
-        userId = ++usersMapKeyCounter;
         user.setId(userId);
-
         users.put(userId, user);
         log.info("Операция {} выполнена уcпешно", doDo);
-
         return user;
     }
 
-    public User updateUser(User user) throws WrongUserData, NoDataFoubd {
-        // Не уверен, что это верное решение. Наверное, можно как-то использовать билдер и валидатор
-        // Вместо этого класса или пихать это в "сервис"
-        Integer userId = user.getId();
-        String login = user.getLogin();
-        String name = user.getName();
+    public User updateUser(User user) throws WrongUserDataException, NoDataFoundException {
+        Integer userId = user.getId();;
         String doDo;
-        Optional<User> existsSameUser = getUserByLogin(login);
-
-        if (name.isEmpty()) user.setName(login); //Имя заменяем на логин, если пустое
 
         if (userId != null) {
             doDo = "обновление пользователя";
@@ -88,15 +48,7 @@ public class UserService {
             if (!users.containsKey(userId)) {
                 String msg = String.format("Нет пользователя с 'id' %s. Обновление не возможно.", userId);
                 log.info(msg);
-                throw new NoDataFoubd(msg);
-            }
-
-            if (existsSameUser.isPresent()) {
-                if (existsSameUser.get().getId() != userId) {
-                    String msg = String.format("Не возможно обновить пользователя логин %s занят", login);
-                    log.info(msg);
-                    throw new WrongUserData(msg);
-                }
+                throw new NoDataFoundException(msg);
             }
 
             users.put(userId, user);
@@ -107,15 +59,15 @@ public class UserService {
 
         String msg = String.format("Не указан 'id' %s. Обновление не возможно.", userId);
         log.info(msg);
-        throw new WrongUserData(msg);
+        throw new WrongUserDataException(msg);
 
     }
 
-    public void delete(Integer id) throws WrongUserData {
+    public void delete(Integer id) throws WrongUserDataException {
         if (!users.containsKey(id)) {
             String msg = String.format("Нет пользователя с ID %s", id);
             log.info(msg);
-            throw new WrongUserData(msg);
+            throw new WrongUserDataException(msg);
         } else {
             users.remove(id);
             log.info("Пользователь {} удален", id);
