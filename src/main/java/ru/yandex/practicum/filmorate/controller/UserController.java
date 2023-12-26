@@ -77,7 +77,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongUserDataException.class)
     public String WrongUserDataException(WrongUserDataException e) {
-        return new String(e.getMessage());
+        return e.getMessage();
     }
 
 }

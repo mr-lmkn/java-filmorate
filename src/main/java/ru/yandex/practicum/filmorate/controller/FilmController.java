@@ -78,6 +78,6 @@ public class FilmController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongFilmDataException.class)
     public String WrongFilmDataException(WrongFilmDataException e) {
-        return new String(e.getMessage());
+        return e.getMessage();
     }
 }

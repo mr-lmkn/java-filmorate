@@ -38,7 +38,7 @@ public class UserService {
     }
 
     public User updateUser(User user) throws WrongUserDataException, NoDataFoundException {
-        Integer userId = user.getId();;
+        Integer userId = user.getId();
         String doDo;
 
         if (userId != null) {
