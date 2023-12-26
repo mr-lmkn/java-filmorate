@@ -70,14 +70,14 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NoDataFoundException.class)
-    public String noDataFoundException(NoDataFoundException ex) {
-        return ex.getMessage();
+    public Map<String, String> noDataFoundException(NoDataFoundException e) {
+        return Collections.singletonMap("Error message", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongUserDataException.class)
-    public String wrongUserDataException(WrongUserDataException e) {
-        return e.getMessage();
+    public Map<String, String> wrongUserDataException(WrongUserDataException e) {
+        return Collections.singletonMap("Error message", e.getMessage());
     }
 
 }

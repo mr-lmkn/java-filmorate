@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
+import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -71,13 +72,13 @@ public class FilmController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(NoDataFoundException.class)
-    public String noDataFoundException(NoDataFoundException ex) {
-        return ex.getMessage();
+    public Map<String, String> noDataFoundException(NoDataFoundException e) {
+        return Collections.singletonMap("Error message", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongFilmDataException.class)
-    public String wrongFilmDataException(WrongFilmDataException e) {
-        return e.getMessage();
+    public Map<String, String> wrongFilmDataException(WrongFilmDataException e) {
+        return Collections.singletonMap("Error message", e.getMessage());
     }
 }
