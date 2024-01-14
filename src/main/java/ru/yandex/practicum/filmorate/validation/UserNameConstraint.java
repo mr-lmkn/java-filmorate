@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface UserNameConstraint {
 
-    String message() default "Не получилось обновить имя пользователя";
+    String message() default "Не получилось обновить имя пользователя.";
 
     Class<?>[] groups() default {};
 
