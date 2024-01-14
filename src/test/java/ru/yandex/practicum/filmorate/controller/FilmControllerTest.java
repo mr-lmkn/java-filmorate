@@ -16,8 +16,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-import ru.yandex.practicum.filmorate.service.film.FilmServiceImpl;
-import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.ArrayList;
 
