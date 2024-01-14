@@ -10,6 +10,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -40,5 +42,18 @@ public class Film {
     // продолжительность фильма
     @Min(value = 1, message = "продолжительность фильма должна быть положительной.")
     private Integer duration;
+
+    @Nullable
+    private Set<Integer> likes;
+
+    public Set<Integer> getLikes() {
+        Set<Integer> outLikes;
+        if (likes != null) {
+            outLikes = likes;
+        } else {
+            outLikes = new HashSet<>();
+        }
+        return outLikes;
+    }
 
 }

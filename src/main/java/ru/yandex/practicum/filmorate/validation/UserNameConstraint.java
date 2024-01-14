@@ -8,6 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 @Constraint(validatedBy = UserNameConstraintValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RUNTIME)

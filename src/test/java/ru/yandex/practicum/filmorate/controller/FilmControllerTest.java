@@ -15,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.film.FilmServiceImpl;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.ArrayList;
 
@@ -27,7 +29,10 @@ class FilmControllerTest {
 
     Film film;
     private MockMvc mockMvc;
+    @Autowired
     private FilmController controller;
+    @Autowired
+    private FilmService filmService;
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -36,13 +41,14 @@ class FilmControllerTest {
                 .description("Descripton")
                 .duration(15)
                 .build();
-        controller = new FilmController();
+        //filmService = new FilmServiceImpl();
+        //controller = new FilmController();
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @AfterEach
     void flush() {
-        FilmService.flushFilms();
+        filmService.flushFilms();
     }
 
     @Test

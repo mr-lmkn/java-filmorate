@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.reactive.function.BodyInserters;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,6 +33,8 @@ class UserControllerTest {
     User user;
     private MockMvc mockMvc;
     private UserController controller;
+    @Autowired
+    UserService serService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,7 +53,7 @@ class UserControllerTest {
 
     @AfterEach
     void flush() {
-        UserService.flushUsers();
+        serService.flushUsers();
     }
 
     @Test

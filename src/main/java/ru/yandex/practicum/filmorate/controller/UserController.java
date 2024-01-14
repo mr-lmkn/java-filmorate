@@ -1,25 +1,24 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    private UserService users = new UserService();
+    @Autowired
+    private UserService users;// = new UserService();
 
     @GetMapping()
     public List<User> getAll() {
@@ -28,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public User getUser(@Valid @PathVariable Integer id) {
+    public User getUser(@Valid @PathVariable Integer id) throws NoDataFoundException {
         log.info("Got user request");
         return users.getUserById(id);
     }
@@ -55,29 +54,29 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    @PutMapping("/{id}/friends/{friendId}") // добавление в друзья
+    public User addFriend(@PathVariable int id, @PathVariable int friendId) throws NoDataFoundException {
+        log.info("Got add user {} friend {} request", id, friendId);
+        return users.addFriend(id, friendId);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(NoDataFoundException.class)
-    public Map<String, String> noDataFoundException(NoDataFoundException e) {
-        return Collections.singletonMap("Error message", e.getMessage());
+    @DeleteMapping("/{id}/friends/{friendId}") // удаление из друзей
+    public User deleteFriend(@PathVariable int id, @PathVariable int friendId) throws NoDataFoundException {
+        log.info("Got delete user {} friend {} request", id, friendId);
+        return users.deteteFriend(id, friendId);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(WrongUserDataException.class)
-    public Map<String, String> wrongUserDataException(WrongUserDataException e) {
-        return Collections.singletonMap("Error message", e.getMessage());
+    @GetMapping("/{id}/friends") //возвращаем список пользователей, являющихся его друзьями
+    public List<User> getFriends(@PathVariable int id) throws NoDataFoundException {
+        log.info("Got all user {} friends request", id);
+        return users.getAllUserFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{comparedUserId}") //список друзей, общих с другим пользователем
+    public List<User> getIntersectFriends(@PathVariable int id, @PathVariable int comparedUserId)
+            throws NoDataFoundException {
+        log.info("Got all user {} friends request", id);
+        return users.getIntersectFriends(id, comparedUserId);
     }
 
 }
