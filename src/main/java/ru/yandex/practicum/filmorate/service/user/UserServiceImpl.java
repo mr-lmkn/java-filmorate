@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
     public User addFriend(int userId, int friendId) throws NoDataFoundException {
         users.addFriend(userId, friendId);
+        users.addFriend(friendId, userId); //? эммм. ну ок.
         return users.getUserById(userId);
     }
 
