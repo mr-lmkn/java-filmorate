@@ -15,7 +15,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@TestPropertySource(properties = {"ru.yandex.practicum.filmorate.validation.MIN_FILM_RELEASE_DATE=1895-12-28"})
+@TestPropertySource(properties = {"ru.yandex.practicum.filmorate.validation.filmMinReleaseDate=1895-12-28"})
 class MinReleaseDateConstraintValidatorTest {
 
     @Mock

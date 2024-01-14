@@ -14,15 +14,15 @@ import java.time.format.DateTimeFormatter;
 public class MinReleaseDateConstraintValidator implements ConstraintValidator<MinReleaseDateConstraint, LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     //private String minReleaseDate = "1895-12-28";
-    @Value("${ru.yandex.practicum.filmorate.validation.MIN_FILM_RELEASE_DATE}")
-    private String MIN_FILM_RELEASE_DATE;
+    @Value("${ru.yandex.practicum.filmorate.validation.filmMinReleaseDate}")
+    private String filmMinReleaseDate;
 
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
-        log.debug("Setting 'minReleaseDate' is set to {}", MIN_FILM_RELEASE_DATE);
+        log.debug("Setting 'minReleaseDate' is set to {}", filmMinReleaseDate);
         if (value != null) {
-            log.debug("Compare {} to {}", MIN_FILM_RELEASE_DATE, value.toString());
-            return value.isAfter(LocalDate.parse(MIN_FILM_RELEASE_DATE, formatter));
+            log.debug("Compare {} to {}", filmMinReleaseDate, value.toString());
+            return value.isAfter(LocalDate.parse(filmMinReleaseDate, formatter));
         }
         return true;
     }

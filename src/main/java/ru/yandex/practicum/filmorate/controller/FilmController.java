@@ -18,8 +18,8 @@ import java.util.Optional;
 @RequestMapping(value = "/films", produces = "application/json")
 @Slf4j
 public class FilmController {
-    @Value("${ru.yandex.practicum.filmorate.controller.POPULAR_FILMS_LIMIT_DEFAULT_VALUE}")
-    private Integer POPULAR_FILMS_LIMIT_DEFAULT_VALUE;
+    @Value("${ru.yandex.practicum.filmorate.controller.popularFilmsLimitDefaultValue}")
+    private Integer popularFilmsLimitDefaultValue;
 
     @Autowired
     private FilmService films;
@@ -80,7 +80,7 @@ public class FilmController {
         if (count.isPresent()) {
             limit = count.get();
         } else {
-            limit = POPULAR_FILMS_LIMIT_DEFAULT_VALUE;
+            limit = popularFilmsLimitDefaultValue;
         }
         log.info("Got popular films list request. Limit is set to: ", limit);
         return films.getPopular(limit);
