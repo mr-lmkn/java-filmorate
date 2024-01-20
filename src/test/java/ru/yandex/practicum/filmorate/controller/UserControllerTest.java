@@ -55,8 +55,8 @@ class UserControllerTest {
                 .build();
 
         //this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-       // WebApplicationContext webApplicationContext = new StaticWebApplicationContext();
-       // this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        // WebApplicationContext webApplicationContext = new StaticWebApplicationContext();
+        // this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
