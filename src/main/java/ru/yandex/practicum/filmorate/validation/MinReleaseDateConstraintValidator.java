@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -14,8 +13,8 @@ import java.time.format.DateTimeFormatter;
 public class MinReleaseDateConstraintValidator implements ConstraintValidator<MinReleaseDateConstraint, LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // "1895-12-28";
 
-    @Value("${ru.yandex.practicum.filmorate.validation.minReleaseDate}")
-    private String minReleaseDate;
+    //@Value("${ru.yandex.practicum.filmorate.validation.minReleaseDate}")
+    private String minReleaseDate = "1895-12-28";
 
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
