@@ -12,18 +12,18 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest()
 class MinReleaseDateConstraintValidatorTest {
 
-    @Autowired
-    MinReleaseDateConstraintValidator minReleaseDateConstraintValidator;
+   /* @Autowired
+    MinReleaseDateConstraintValidator minReleaseDateConstraintValidator;*/
     private static ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private static Validator validator = validatorFactory.getValidator();
 
@@ -37,13 +37,15 @@ class MinReleaseDateConstraintValidatorTest {
         validatorFactory.close();
     }
 
+
+/*
     @Test
     public void shouldSpringBootTestAnnotation_overridePropertyValues() {
         //Тут я вижу, что @Value задает значение для MinReleaseDateConstraintValidator.MIN_FILM_RELEASE_DATE;
         String firstProperty = minReleaseDateConstraintValidator.getMinReleaseDate();
         Assert.assertEquals("1895-12-28", firstProperty);
     }
-
+*/
 
     @Test
     public void minReleaseDateOkTest() {

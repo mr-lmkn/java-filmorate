@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Qualifier("MinReleaseDateConstraintValidator")
-@Component
 public class MinReleaseDateConstraintValidator implements ConstraintValidator<MinReleaseDateConstraint, LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // "1895-12-28";
 
