@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +20,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/films", produces = "application/json")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
     @Value("${ru.yandex.practicum.filmorate.controller.popularFilmsLimitDefaultValue}")
     private Integer popularFilmsLimitDefaultValue;
 
-    @Autowired
-    private FilmService films;
+    private final FilmService films;
 
     @GetMapping(produces = "application/json;")
     public List<Film> getAll() {

@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.validation.UserNameConstraint;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -46,5 +47,15 @@ public class User {
 
     @Nullable
     private Set<Integer> friends;
+
+    public Set<Integer> getFriends() {
+        Set<Integer> outFriends;
+        if (friends != null) {
+            outFriends = friends;
+        } else {
+            outFriends = new HashSet<>();
+        }
+        return outFriends;
+    }
 
 }

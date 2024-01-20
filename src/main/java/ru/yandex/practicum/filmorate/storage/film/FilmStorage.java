@@ -17,5 +17,4 @@ public interface FilmStorage {
 
     void delete(Integer id) throws WrongFilmDataException;
 
-    void flushFilms();
 }

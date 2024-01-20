@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     public User addFriend(int userId, int friendId) throws NoDataFoundException {
         users.addFriend(userId, friendId);
-        users.addFriend(friendId, userId); //? эммм. ну ок.
+        users.addFriend(friendId, userId);
         return users.getUserById(userId);
     }
 
@@ -70,25 +71,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ArrayList<User> getIntersectFriends(int userId, int compareUserId) throws NoDataFoundException {
-        ArrayList<User> outList = new ArrayList<User>();
-        ArrayList<Integer> userFriends = users.getAllUserFriends(userId);
-        ArrayList<Integer> compareUserFriends = users.getAllUserFriends(compareUserId);
-        // Если что-то пустое - вернем пустой список
-        if (compareUserFriends == null || userFriends.isEmpty() || compareUserFriends.isEmpty()) {
-            return outList;
-        }
-        // Нужны только пересекающиеся пользователи
-        for (int friend : userFriends) {
-            if (compareUserFriends.contains(friend)) {
-                outList.add(users.getUserById(friend));
-            }
+        ArrayList<User> outList = new ArrayList<>();
+        ArrayList<Integer> o = new ArrayList<>();
+        Collection<Integer> userFriends = users.getAllUserFriends(userId);
+        Collection<Integer> compareUserFriends = users.getAllUserFriends(compareUserId);
+        userFriends.retainAll(compareUserFriends);
+        for (int friend : userFriends) { // ну не знаю, где оно тут в разы улучшилось, ну ок.
+            outList.add(users.getUserById(friend));
         }
         return outList;
-    }
-
-    @Override
-    public void flushUsers() {
-        users.flushUsers();
     }
 
 }

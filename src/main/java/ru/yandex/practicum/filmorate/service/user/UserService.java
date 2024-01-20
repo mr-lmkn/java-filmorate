@@ -26,5 +26,4 @@ public interface UserService {
 
     ArrayList<User> getIntersectFriends(int userId, int compareUserId) throws NoDataFoundException;
 
-    void flushUsers();
 }

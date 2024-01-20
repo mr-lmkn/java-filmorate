@@ -11,8 +11,8 @@ import java.util.*;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private static Map<Integer, User> users = new HashMap<>();
-    private static Integer usersMapKeyCounter = 0;
+    private final Map<Integer, User> users = new HashMap<>();
+    private Integer usersMapKeyCounter = 0;
 
     @Override
     public List<User> getAllUsers() {
@@ -24,7 +24,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (users.containsKey(id)) {
             return users.get(id);
         }
-        String msg = String.format("Нет пользователя с 'id'=%s. Обновление не возможно.", id);
+        String msg = String.format("Нет пользователя с 'id'=%s.", id);
         log.warn(msg);
         throw new NoDataFoundException(msg);
     }
@@ -152,8 +152,4 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
-    public void flushUsers() {
-        users = new HashMap<>();
-        usersMapKeyCounter = 0;
-    }
 }

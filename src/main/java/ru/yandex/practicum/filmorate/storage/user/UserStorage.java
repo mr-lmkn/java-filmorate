@@ -24,5 +24,4 @@ public interface UserStorage {
 
     ArrayList<Integer> getAllUserFriends(int userId) throws NoDataFoundException;
 
-    void flushUsers();
 }

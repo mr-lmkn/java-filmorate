@@ -15,8 +15,8 @@ import java.util.Map;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private static Map<Integer, Film> films = new HashMap<>();
-    private static Integer filmsMapKeyCounter = 0;
+    private final Map<Integer, Film> films = new HashMap<>();
+    private Integer filmsMapKeyCounter = 0;
 
     @Override
     public List<Film> getAllFilms() {
@@ -79,12 +79,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             films.remove(id);
             log.info("Фильм {} удален", id);
         }
-    }
-
-    @Override
-    public void flushFilms() {
-        films = new HashMap<>();
-        filmsMapKeyCounter = 0;
     }
 
 }

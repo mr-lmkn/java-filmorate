@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -9,13 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
 
@@ -23,14 +26,24 @@ import java.util.ArrayList;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
+@EnableWebMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
 
     Film film;
+
     private MockMvc mockMvc;
+
     @Autowired
     private FilmController controller;
     @Autowired
     private FilmService filmService;
+    @Autowired
+    private FilmStorage filmStorage;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserStorage userStorage;
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -39,15 +52,12 @@ class FilmControllerTest {
                 .description("Descripton")
                 .duration(15)
                 .build();
-        //filmService = new FilmServiceImpl();
-        //controller = new FilmController();
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
+        // controller = new FilmController();
+        // filmService = new FilmServiceImpl(filmStorage, userService);
+        // this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    @AfterEach
-    void flush() {
-        filmService.flushFilms();
-    }
 
     @Test
     void getAllTest(@Autowired WebTestClient webClient) {

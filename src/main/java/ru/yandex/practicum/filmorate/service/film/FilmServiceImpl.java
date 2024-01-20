@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service.film;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
@@ -19,10 +18,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
-    @Autowired
-    FilmStorage films;
-    @Autowired
-    UserService userService;
+    private FilmStorage films;
+    private UserService userService;
 
     @Override
     public List<Film> getAllFilms() {
@@ -63,7 +60,7 @@ public class FilmServiceImpl implements FilmService {
         if (film.getLikes() != null) {
             likes = film.getLikes();
         }
-        //Set<Integer> likes = Optional.of(film.getLikes()).orElse(new HashSet<>()); -- Гм. а почему это не работает?
+        //Set<Integer> likes = Optional.of(film.getLikes()).orElse(new HashSet<>()); //  ofNullable Гм. а почему это не работает?
         likes.add(user.getId());
         film.setLikes(likes);
         return film;
@@ -95,11 +92,6 @@ public class FilmServiceImpl implements FilmService {
                 .toArray(Film[]::new));
 
         return maxLiked;
-    }
-
-    @Override
-    public void flushFilms() {
-        films.flushFilms();
     }
 
 }

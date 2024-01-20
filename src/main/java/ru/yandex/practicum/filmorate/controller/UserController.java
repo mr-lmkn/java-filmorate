@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService users;// = new UserService();
+    private UserService users;
 
     @GetMapping()
     public List<User> getAll() {

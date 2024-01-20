@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,11 +37,6 @@ class FilmServiceTest {
                 .duration(100)
                 .releaseDate(LocalDate.of(2023, 01, 01))
                 .build();
-    }
-
-    @AfterEach
-    void flush() {
-        filmService.flushFilms();
     }
 
     @Test
