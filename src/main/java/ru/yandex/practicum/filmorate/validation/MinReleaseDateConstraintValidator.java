@@ -12,18 +12,10 @@ import java.time.format.DateTimeFormatter;
 @Qualifier("MinReleaseDateConstraintValidator")
 public class MinReleaseDateConstraintValidator implements ConstraintValidator<MinReleaseDateConstraint, LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // "1895-12-28";
-
-    //@Value("${ru.yandex.practicum.filmorate.validation.minReleaseDate}")
-    private String minReleaseDate = "1895-12-28";
+    private static final String minReleaseDate = "1895-12-28";
 
     @Override
     public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
-        if (minReleaseDate == null) {
-            // Я так и не понял как сделать тест для этой валидации, есть идеи как это запустить?
-            // Мок тест? Но я, хочу тестировать только валидацию
-            // minReleaseDate - в тесте у меня всегда NULL
-            minReleaseDate = "1895-12-28";
-        }
         log.debug("Setting 'minReleaseDate' is set to {}", minReleaseDate);
         if (value != null) {
             log.debug("Compare {} to {}", minReleaseDate, value.toString());
