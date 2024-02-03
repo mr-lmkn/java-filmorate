@@ -1,26 +1,28 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/films", produces = "application/json")
 @Slf4j
+@RequiredArgsConstructor
 public class FilmController {
+    @Value("${ru.yandex.practicum.filmorate.controller.popularFilmsLimitDefaultValue}")
+    private Integer popularFilmsLimitDefaultValue;
 
-    private FilmService films = new FilmService();
+    private final FilmService films;
 
     @GetMapping(produces = "application/json;")
     public List<Film> getAll() {
@@ -29,7 +31,7 @@ public class FilmController {
     }
 
     @GetMapping(value = "/{id}", produces = "application/json;")
-    public Film getUser(@Valid @PathVariable Integer id) {
+    public Film getUser(@Valid @PathVariable Integer id) throws NoDataFoundException {
         log.info("Got user request");
         return films.getFilmById(id);
     }
@@ -56,28 +58,32 @@ public class FilmController {
         return ResponseEntity.noContent().build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    @PutMapping(value = "/{filmId}/like/{userId}", produces = "application/json;")
+    public Film update(@Valid @PathVariable Integer filmId, @Valid @PathVariable Integer userId)
+            throws WrongFilmDataException, NoDataFoundException {
+        log.info("Got add like from user {} to film {} request", userId, filmId);
+        return films.addLike(filmId, userId);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(NoDataFoundException.class)
-    public Map<String, String> noDataFoundException(NoDataFoundException e) {
-        return Collections.singletonMap("Error message", e.getMessage());
+    @DeleteMapping(value = "/{filmId}/like/{userId}", produces = "application/json;")
+    public ResponseEntity<String> delete(@Valid @PathVariable Integer filmId, @Valid @PathVariable Integer userId)
+            throws WrongFilmDataException, NoDataFoundException {
+        log.info("Got delete like of user {} from film {} request", userId, filmId);
+        films.deleteLike(filmId, userId);
+        return ResponseEntity.noContent().build();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(WrongFilmDataException.class)
-    public Map<String, String> wrongFilmDataException(WrongFilmDataException e) {
-        return Collections.singletonMap("Error message", e.getMessage());
+    @GetMapping(value = {"/popular"}, produces = "application/json;")
+    public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count)
+            throws NoDataFoundException {
+        Integer limit;
+        if (count.isPresent()) {
+            limit = count.get();
+        } else {
+            limit = popularFilmsLimitDefaultValue;
+        }
+        log.info("Got popular films list request. Limit is set to: ", limit);
+        return films.getPopular(limit);
     }
+
 }

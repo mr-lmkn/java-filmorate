@@ -1,6 +1,7 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,24 +11,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Slf4j
-public class FilmService {
+public class InMemoryFilmStorage implements FilmStorage {
 
-    private static Map<Integer, Film> films = new HashMap<>();
-    private static Integer filmsMapKeyCounter = 0;
+    private final Map<Integer, Film> films = new HashMap<>();
+    private Integer filmsMapKeyCounter = 0;
 
+    @Override
     public List<Film> getAllFilms() {
         return new ArrayList<>(films.values());
     }
 
-    public Film getFilmById(Integer id) {
+    @Override
+    public Film getFilmById(Integer id) throws NoDataFoundException {
         if (films.containsKey(id)) {
             return films.get(id);
         }
-        log.warn("Фильма с ИД {} - нет в системе", id);
-        return null;
+        String msg = String.format("Фильма с ИД %s - нет в системе. Обновление не возможно.", id);
+        log.warn(msg);
+        throw new NoDataFoundException(msg);
     }
 
+    @Override
     public Film createFilm(Film film) throws WrongFilmDataException {
         Integer filmId = ++filmsMapKeyCounter;
         log.info("Инициировано создание фильма");
@@ -37,6 +43,7 @@ public class FilmService {
         return film;
     }
 
+    @Override
     public Film updateFilm(Film film) throws WrongFilmDataException, NoDataFoundException {
         Integer filmId = film.getId();
         String doDo;
@@ -62,6 +69,7 @@ public class FilmService {
         throw new WrongFilmDataException(msg);
     }
 
+    @Override
     public void delete(Integer id) throws WrongFilmDataException {
         if (!films.containsKey(id)) {
             String msg = String.format("Нет фильма с ID %s", id);
@@ -71,11 +79,6 @@ public class FilmService {
             films.remove(id);
             log.info("Фильм {} удален", id);
         }
-    }
-
-    public static void flushFilms() {
-        films = new HashMap<>();
-        filmsMapKeyCounter = 0;
     }
 
 }

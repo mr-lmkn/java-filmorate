@@ -1,15 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.film.FilmService;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,22 +24,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class FilmServiceTest {
 
     Film film;
+    @Autowired
     FilmService filmService;
+    @Autowired
+    UserService userService;
 
     @BeforeEach
     public void setUp() {
-        filmService = new FilmService();
         film = Film.builder() //создали фильм
                 .name("Фильм 1")
                 .description("Описание фильма 1")
                 .duration(100)
                 .releaseDate(LocalDate.of(2023, 01, 01))
                 .build();
-    }
-
-    @AfterEach
-    void flush() {
-        FilmService.flushFilms();
     }
 
     @Test
@@ -47,7 +46,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void getFilm() throws WrongFilmDataException {
+    public void getFilm() throws WrongFilmDataException, NoDataFoundException {
         Film isfilm = filmService.createFilm(film);
         Film filmOptional = filmService.getFilmById(1);
         Assertions.assertNotNull(filmOptional);

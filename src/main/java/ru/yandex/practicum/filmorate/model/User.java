@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.validation.UserNameConstraint;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -31,7 +33,8 @@ public class User {
 
     // логин пользователя
     @NotBlank(message = "Поле 'Login' не может быть пустым")
-    @Pattern(regexp = ".*[^\\h]", message = "Поле содержит пробелы")
+    //@Pattern(regexp = ".*[^\\h]", message = "Поле содержит пробелы")
+    @Pattern(regexp = "^.[^\\s ]*$", message = "Поле содержит пробелы")
     private String login;
 
     // имя для отображения
@@ -41,5 +44,18 @@ public class User {
     @Past
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthday;
+
+    @Nullable
+    private Set<Integer> friends;
+
+    public Set<Integer> getFriends() {
+        Set<Integer> outFriends;
+        if (friends != null) {
+            outFriends = friends;
+        } else {
+            outFriends = new HashSet<>();
+        }
+        return outFriends;
+    }
 
 }
