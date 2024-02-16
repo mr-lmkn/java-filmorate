@@ -40,7 +40,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void createFilm() throws WrongFilmDataException {
+    public void createFilm() throws WrongFilmDataException, NoDataFoundException {
         Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");
     }
@@ -53,7 +53,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void getAllFilm() throws WrongFilmDataException {
+    public void getAllFilm() throws WrongFilmDataException, NoDataFoundException {
         Film isfilm = filmService.createFilm(film);
         List<Film> filmList = filmService.getAllFilms();
         Assertions.assertNotNull(filmList);
@@ -70,7 +70,7 @@ class FilmServiceTest {
     }
 
     @Test
-    public void wrongDate() throws WrongFilmDataException {
+    public void wrongDate() throws WrongFilmDataException, NoDataFoundException {
         film.setReleaseDate(LocalDate.of(1, 01, 01));
         Film isfilm = filmService.createFilm(film);
         assertEquals(film, isfilm, "Фильм не создан");

@@ -11,7 +11,7 @@ public interface FilmService {
 
     Film getFilmById(Integer id) throws NoDataFoundException;
 
-    Film createFilm(Film film) throws WrongFilmDataException;
+    Film createFilm(Film film) throws WrongFilmDataException, NoDataFoundException;
 
     Film updateFilm(Film film) throws WrongFilmDataException, NoDataFoundException;
 

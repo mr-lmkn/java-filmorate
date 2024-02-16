@@ -38,7 +38,7 @@ public class FilmController {
 
     @PostMapping(consumes = "application/json;charset=UTF-8", produces = "application/json;")
     public Film add(@Valid @RequestBody Film film)
-            throws WrongFilmDataException {
+            throws WrongFilmDataException, NoDataFoundException {
         log.info("Got create film request: {} ", film);
         return films.createFilm(film);
     }

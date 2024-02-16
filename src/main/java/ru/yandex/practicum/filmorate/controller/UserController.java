@@ -60,6 +60,12 @@ public class UserController {
         return users.addFriend(id, friendId);
     }
 
+    @PutMapping("/{id}/friends/confirm/{friendId}") // подтверждение дружбы
+    public User confirmFriend(@PathVariable int id, @PathVariable int friendId) throws NoDataFoundException {
+        log.info("Got confirm user {} friend {} request", id, friendId);
+        return users.confirmFriend(id, friendId);
+    }
+
     @DeleteMapping("/{id}/friends/{friendId}") // удаление из друзей
     public User deleteFriend(@PathVariable int id, @PathVariable int friendId) throws NoDataFoundException {
         log.info("Got delete user {} friend {} request", id, friendId);

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.user;
+package ru.yandex.practicum.filmorate.service.user.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        log.info("Зарос создания всех пользователей");
+        log.info("Зарос всех пользователей");
         return users.getAllUsers();
     }
 
@@ -39,44 +40,55 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) throws WrongUserDataException, NoDataFoundException {
-        log.info("Зарос создания пользователя");
+        log.info("Зарос обновления пользователя");
         return users.updateUser(user);
     }
 
     @Override
     public void delete(Integer id) throws WrongUserDataException {
+        log.info("Зарос удаления пользователя");
         users.delete(id);
     }
 
-    public User addFriend(int userId, int friendId) throws NoDataFoundException {
-        users.addFriend(userId, friendId);
-        users.addFriend(friendId, userId);
+    public User addFriend(Integer userId, Integer friendId) throws NoDataFoundException {
+        log.info("Зарос удаления друзей");
+        users.addFriend(userId, friendId, true);
+        users.addFriend(friendId, userId, false);
         return users.getUserById(userId);
     }
 
-    public User deteteFriend(int userId, int friendId) throws NoDataFoundException {
+    public User confirmFriend(Integer userId, Integer friendId) throws NoDataFoundException {
+        log.info("Зарос подтверждения дружбы");
+        users.confirmFriend(userId, friendId);
+        return users.getUserById(userId);
+    }
+
+    public User deteteFriend(Integer userId, Integer friendId) throws NoDataFoundException {
+        log.info("Зарос удаления дружбы");
         return users.deteteFriend(userId, friendId);
     }
 
-    public ArrayList<User> getAllUserFriends(int userId) throws NoDataFoundException {
+    public ArrayList<User> getAllUserFriends(Integer userId) throws NoDataFoundException {
+        log.info("Зарос всех друзей пользователя");
         ArrayList<User> ret = new ArrayList<>();
         try {
-            for (Integer friend : users.getAllUserFriends(userId)) {
+            for (var friend : users.getAllUserFriends(userId)) {
                 ret.add(users.getUserById(friend));
             }
         } catch (NullPointerException ignored) {
         }
+
         return ret;
     }
 
     @Override
-    public ArrayList<User> getIntersectFriends(int userId, int compareUserId) throws NoDataFoundException {
+    public ArrayList<User> getIntersectFriends(Integer userId, Integer compareUserId) throws NoDataFoundException {
+        log.info("Зарос общих друзей");
         ArrayList<User> outList = new ArrayList<>();
-        ArrayList<Integer> o = new ArrayList<>();
         Collection<Integer> userFriends = users.getAllUserFriends(userId);
         Collection<Integer> compareUserFriends = users.getAllUserFriends(compareUserId);
         userFriends.retainAll(compareUserFriends);
-        for (int friend : userFriends) { // ну не знаю, где оно тут в разы улучшилось, ну ок.
+        for (Integer friend : userFriends) {
             outList.add(users.getUserById(friend));
         }
         return outList;

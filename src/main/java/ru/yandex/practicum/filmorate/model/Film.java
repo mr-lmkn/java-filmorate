@@ -21,7 +21,7 @@ import java.util.Set;
 public class Film {
 
     // целочисленный идентификатор
-    @Min(value = 1, message = "id должен быть > 1")
+    @Min(value = 1L, message = "id должен быть > 1")
     @Nullable
     private Integer id;
 
@@ -44,7 +44,24 @@ public class Film {
     private Integer duration;
 
     @Nullable
+    private Mpa mpa;
+
+    @Nullable
+    private Set<Genre> genres;
+
+    @Nullable
     private Set<Integer> likes;
+
+
+    public Set<Genre> getGenres() {
+        Set<Genre> outGenres;
+        if (genres != null) {
+            outGenres = genres;
+        } else {
+            outGenres = new HashSet<>();
+        }
+        return outGenres;
+    }
 
     public Set<Integer> getLikes() {
         Set<Integer> outLikes;
@@ -55,5 +72,6 @@ public class Film {
         }
         return outLikes;
     }
+
 
 }

@@ -18,12 +18,14 @@ public interface UserService {
 
     void delete(Integer id) throws WrongUserDataException;
 
-    User addFriend(int userId, int friendId) throws NoDataFoundException;
+    User addFriend(Integer userId, Integer friendId) throws NoDataFoundException;
 
-    User deteteFriend(int userId, int friendId) throws NoDataFoundException;
+    User confirmFriend(Integer userId, Integer friendId) throws NoDataFoundException;
 
-    ArrayList<User> getAllUserFriends(int userId) throws NoDataFoundException;
+    User deteteFriend(Integer userId, Integer friendId) throws NoDataFoundException;
 
-    ArrayList<User> getIntersectFriends(int userId, int compareUserId) throws NoDataFoundException;
+    ArrayList<User> getAllUserFriends(Integer userId) throws NoDataFoundException;
+
+    ArrayList<User> getIntersectFriends(Integer userId, Integer compareUserId) throws NoDataFoundException;
 
 }

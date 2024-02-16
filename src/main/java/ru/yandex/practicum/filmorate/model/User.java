@@ -33,7 +33,6 @@ public class User {
 
     // логин пользователя
     @NotBlank(message = "Поле 'Login' не может быть пустым")
-    //@Pattern(regexp = ".*[^\\h]", message = "Поле содержит пробелы")
     @Pattern(regexp = "^.[^\\s ]*$", message = "Поле содержит пробелы")
     private String login;
 
