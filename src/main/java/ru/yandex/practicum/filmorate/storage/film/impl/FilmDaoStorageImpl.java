@@ -141,8 +141,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
 
         if (id != null && id > 0) {
             Integer updaterRows = dataSource.update(
-                    "DELETE FROM FILMS WHERE USER_ID = ?"
-                    , id
+                    "DELETE FROM FILMS WHERE USER_ID = ?",
+                    id
             );
 
             if (updaterRows > 0) {
@@ -173,8 +173,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
                     userId
             );
         } catch (DataIntegrityViolationException e) {
-            String msg = String.format("Ошибка записи лайка для фильма %s от пользователя %s. %s"
-                    , filmId, userId, e.fillInStackTrace());
+            String msg = String.format("Ошибка записи лайка для фильма %s от пользователя %s. %s",
+                    filmId, userId, e.fillInStackTrace());
             log.info(msg);
             throw new NoDataFoundException(msg);
         }
@@ -256,10 +256,10 @@ public class FilmDaoStorageImpl implements FilmStorage {
                 .description(filmRows.getString("DESCRIPTION"))
                 .releaseDate(filmRows.getDate("RELEASE_DATE").toLocalDate())
                 .duration(filmRows.getInt("DURATION"))
-                .mpa(new Mpa(filmRows.getInt("RATING_ID")
-                        , filmRows.getString("RATING_CODE")
-                        , filmRows.getString("RATING_NAME")
-                        , filmRows.getString("RATING_DESCRIPTION"))
+                .mpa(new Mpa(filmRows.getInt("RATING_ID"),
+                        filmRows.getString("RATING_CODE"),
+                        filmRows.getString("RATING_NAME"),
+                        filmRows.getString("RATING_DESCRIPTION"))
                 )
                 .genres(genre)
                 .likes(likes)
