@@ -145,8 +145,8 @@ public class GenreDaoSorageImpl implements GenreStorage {
 
     private Genre mapGenreRow(SqlRowSet genreRows) {
         Genre genre = new Genre(
-                genreRows.getInt("GENRE_ID")
-                , genreRows.getString("GENRE_NAME")
+                genreRows.getInt("GENRE_ID"),
+                genreRows.getString("GENRE_NAME")
         );
         return genre;
     }
