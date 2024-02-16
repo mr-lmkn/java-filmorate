@@ -83,8 +83,6 @@ public class GenreDaoSorageImpl implements GenreStorage {
                 .map(Genre::getId)
                 .collect(Collectors.toList());
 
-        log.info(filmId + "/" + genreIds.toString());
-
         log.info("удаляем все");
         String deleteQery = "DELETE FROM FILM_GENRES g WHERE g.FILM_ID = ? ";
         dataSource.update(deleteQery, filmId);
@@ -125,11 +123,11 @@ public class GenreDaoSorageImpl implements GenreStorage {
                 + " WHEN NOT MATCHED THEN "
                 + " INSERT  (FILM_ID,GENRE_ID) VALUES (?,?)";
         String msg;
-        LinkedHashSet<Genre> outSet = new LinkedHashSet<>();
+        Genre outGenre = genre;
 
         try {
             dataSource.update(insQuery, filmId, genre.getId(), filmId, genre.getId());
-            outSet.add(genre);
+            outGenre = getGenreById(genre.getId());
             log.info("установлен жанр фильма {}: {} {}", filmId, genre.getId(), genre.getName());
         } catch (DataIntegrityViolationException e) {
             msg = String.format("Невозможно установить жанр %s фильма %s. %s"
@@ -141,7 +139,7 @@ public class GenreDaoSorageImpl implements GenreStorage {
             throw new NoDataFoundException(msg);
         }
 
-        return genre;
+        return outGenre;
     }
 
     private Genre mapGenreRow(SqlRowSet genreRows) {
