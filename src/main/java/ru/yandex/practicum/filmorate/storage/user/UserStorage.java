@@ -18,10 +18,13 @@ public interface UserStorage {
 
     void delete(Integer id) throws WrongUserDataException;
 
-    User addFriend(int userId, int friendId) throws NoDataFoundException;
+    User addFriend(Integer userId, Integer friendId, boolean confirmed) throws NoDataFoundException;
 
-    User deteteFriend(int userId, int friendId) throws NoDataFoundException;
+    User confirmFriend(Integer userId, Integer friendId) throws NoDataFoundException;
 
-    ArrayList<Integer> getAllUserFriends(int userId) throws NoDataFoundException;
+    User deteteFriend(Integer userId, Integer friendId) throws NoDataFoundException;
+
+    ArrayList<Integer> getAllUserFriends(Integer userId) throws NoDataFoundException;
+
 
 }
