@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.io.IOException;
 
 @JsonComponent
-public class mpaSerializer extends JsonSerializer<Mpa> {
+public class MpaSerializer extends JsonSerializer<Mpa> {
     @Override
     public void serialize(Mpa mpa, JsonGenerator jsonGenerator,
                           SerializerProvider serializerProvider) throws IOException {
