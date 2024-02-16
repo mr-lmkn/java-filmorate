@@ -25,12 +25,12 @@ class UserDbStorageTest {
     public void testFindUserById() throws WrongUserDataException, NoDataFoundException {
         // Подготавливаем данные для теста
         User newUser = new User(
-                1 // LONG ?
-                , "user@email.ru"
-                , "vanya123"
-                , "Ivan Petrov"
-                , LocalDate.of(1990, 1, 1)
-                , null
+                1, // LONG ?
+                "user@email.ru",
+                "vanya123",
+                "Ivan Petrov",
+                LocalDate.of(1990, 1, 1),
+                null
         );
         UserDaoStorageImpl userStorage = new UserDaoStorageImpl(jdbcTemplate);
         userStorage.createUser(newUser);
