@@ -54,8 +54,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
         SqlRowSet filmRows = dataSource.queryForRowSet(
                 " SELECT f.*, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
                         + " FROM FILMS f LEFT JOIN RATING r ON f.RATING_ID = r.RATING_ID"
-                        + " WHERE FILM_ID = ? "
-                , id);
+                        + " WHERE FILM_ID = ? ",
+                id);
         if (filmRows.next()) {
             Film film = mapFilmRow(filmRows);
             log.info("Фильм {} название {}", film.getId(), film.getName());
@@ -80,7 +80,7 @@ public class FilmDaoStorageImpl implements FilmStorage {
         log.info("Generated filmId - " + id);
 
         log.info(film.getGenres().toString());
-        Set<Genre> newGenres = genreStorage.linkGenresToFilmId(id,film.getGenres());
+        Set<Genre> newGenres = genreStorage.linkGenresToFilmId(id, film.getGenres());
         film.setGenres(newGenres);
         film.setId(id);
 
@@ -108,15 +108,15 @@ public class FilmDaoStorageImpl implements FilmStorage {
                             + " RELEASE_DATE = ?,"
                             + " DURATION = ?,"
                             + " RATING_ID = ? "
-                            + " WHERE FILM_ID = ?"
-                    , film.getName()
-                    , film.getDescription()
-                    , film.getReleaseDate()
-                    , film.getDuration()
-                    , film.getMpa().getId()
-                    , id
+                            + " WHERE FILM_ID = ?",
+                    film.getName(),
+                    film.getDescription(),
+                    film.getReleaseDate(),
+                    film.getDuration(),
+                    film.getMpa().getId(),
+                    id
             );
-            genreStorage.linkGenresToFilmId(id,film.getGenres());
+            genreStorage.linkGenresToFilmId(id, film.getGenres());
 
             if (updaterRows > 0) {
                 log.info("Операция {} выполнена уcпешно", doDo);
@@ -166,11 +166,11 @@ public class FilmDaoStorageImpl implements FilmStorage {
                             + " USING VALUES (?, ?) as u(FILM_ID, USER_ID)"
                             + " ON u.FILM_ID = l.FILM_ID AND u.USER_ID = l.USER_ID "
                             + " WHEN NOT MATCHED THEN "
-                            + "   INSERT (FILM_ID,USER_ID) VALUES(?, ?)"
-                    , filmId
-                    , userId
-                    , filmId
-                    , userId
+                            + "   INSERT (FILM_ID,USER_ID) VALUES(?, ?)",
+                    filmId,
+                    userId,
+                    filmId,
+                    userId
             );
         } catch (DataIntegrityViolationException e) {
             String msg = String.format("Ошибка записи лайка для фильма %s от пользователя %s. %s"
@@ -187,9 +187,9 @@ public class FilmDaoStorageImpl implements FilmStorage {
         log.info("Добавления лайка фильму {}", filmId);
         log.info("от пользователя {}", userId);
         Integer deletedRows = dataSource.update(
-                "DELETE FROM FILM_LIKES WHERE FILM_ID = ? AND USER_ID = ?"
-                , filmId
-                , userId
+                "DELETE FROM FILM_LIKES WHERE FILM_ID = ? AND USER_ID = ?",
+                filmId,
+                userId
         );
 
         if (deletedRows == 0) {
@@ -215,8 +215,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
                         + " JOIN RATING r ON r.RATING_ID = f.RATING_ID "
                         + " LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID "
                         + " ORDER BY `LIKES_CNT` DESC NULLS LAST"
-                        + " LIMIT ?;"
-                , limit
+                        + " LIMIT ?;",
+                limit
         );
 
         if (filmsRows.wasNull()) {
@@ -285,8 +285,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
         SqlRowSet likesRows = dataSource.queryForRowSet(
                 "SELECT USER_ID "
                         + " FROM FILM_LIKES f "
-                        + " WHERE f.FILM_ID = ? ;"
-                , filmId
+                        + " WHERE f.FILM_ID = ? ;",
+                filmId
         );
         while (likesRows.next()) {
             Integer userId = likesRows.getInt("USER_ID");

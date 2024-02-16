@@ -71,12 +71,12 @@ public class UserDaoStorageImpl implements UserStorage {
                             + "    EMAIL = ?,"
                             + "    USER_NAME = ?,"
                             + "    BIRTHDAY = ?"
-                            + "WHERE USER_ID = ?"
-                    , user.getLogin()
-                    , user.getEmail()
-                    , user.getName()
-                    , user.getBirthday()
-                    , id
+                            + "WHERE USER_ID = ?",
+                    user.getLogin(),
+                    user.getEmail(),
+                    user.getName(),
+                    user.getBirthday(),
+                    id
             );
 
             if (updaterRows > 0) {
@@ -103,8 +103,8 @@ public class UserDaoStorageImpl implements UserStorage {
 
         if (id != null && id > 0) {
             Integer updaterRows = dataSource.update(
-                    "DELETE FROM USERS WHERE USER_ID = ?"
-                    , id
+                    "DELETE FROM USERS WHERE USER_ID = ?",
+                    id
             );
 
             if (updaterRows > 0) {
@@ -137,10 +137,10 @@ public class UserDaoStorageImpl implements UserStorage {
 
             try {
                 insertedRows = dataSource.update(
-                        merge
-                        , userId, friendId // merged key data
-                        , userId, friendId, confirmed // insert
-                        , userId, friendId, confirmed // update
+                        merge,
+                        userId, friendId,// merged key data
+                        userId, friendId, confirmed, // insert
+                        userId, friendId, confirmed // update
                 );
             } catch (DataIntegrityViolationException e) {
                 String msg = String.format("Ошибка записи дружбы %s с %s.", userId, friendId);
@@ -169,10 +169,10 @@ public class UserDaoStorageImpl implements UserStorage {
                     "UPDATE USER_FRIENDS "
                             + " SET CONFIRMED = ? "
                             + " WHERE USER_ID = ? "
-                            + " AND FRIEND_ID = ? "
-                    , true
-                    , userId
-                    , friendId
+                            + " AND FRIEND_ID = ? ",
+                    true,
+                    userId,
+                    friendId
             );
 
             addFriend(friendId, userId, true);
@@ -202,9 +202,9 @@ public class UserDaoStorageImpl implements UserStorage {
             Integer updaterRows = dataSource.update(
                     "DELETE FROM USER_FRIENDS "
                             + " WHERE USER_ID = ?"
-                            + " AND FRIEND_ID = ?"
-                    , userId
-                    , friendId
+                            + " AND FRIEND_ID = ?",
+                    userId,
+                    friendId
             );
 
             if (updaterRows > 0) {
@@ -230,8 +230,8 @@ public class UserDaoStorageImpl implements UserStorage {
                 "SELECT f.* "
                         + " FROM USER_FRIENDS f "
                         + " WHERE f.USER_ID = ? "
-                        + " AND CONFIRMED = true; "
-                , userId
+                        + " AND CONFIRMED = true; ",
+                userId
         );
         while (friendsRows.next()) {
             Integer friendId = friendsRows.getInt("FRIEND_ID");
@@ -251,12 +251,12 @@ public class UserDaoStorageImpl implements UserStorage {
         }
 
         User user = new User(
-                userId
-                , userRows.getString("EMAIL")
-                , userRows.getString("LOGIN")
-                , userRows.getString("USER_NAME")
-                , userRows.getDate("BIRTHDAY").toLocalDate()
-                , userFriendsList
+                userId,
+                userRows.getString("EMAIL"),
+                userRows.getString("LOGIN"),
+                userRows.getString("USER_NAME"),
+                userRows.getDate("BIRTHDAY").toLocalDate(),
+                userFriendsList
         );
         return user;
     }
