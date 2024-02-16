@@ -40,8 +40,8 @@ public class GenreDaoSorageImpl implements GenreStorage {
     public Genre getGenreById(Integer id) throws NoDataFoundException {
         log.info("Извлечение жанра {}", id);
         SqlRowSet genreRows = dataSource.queryForRowSet(
-                "SELECT GENRE_ID, GENRE_NAME FROM GENRE WHERE GENRE_ID = ?"
-                , id
+                "SELECT GENRE_ID, GENRE_NAME FROM GENRE WHERE GENRE_ID = ?",
+                id
         );
         if (genreRows.next()) {
             Genre genre = mapGenreRow(genreRows);
@@ -61,8 +61,8 @@ public class GenreDaoSorageImpl implements GenreStorage {
         SqlRowSet genreRows = dataSource.queryForRowSet(
                 "SELECT g.GENRE_ID, g.GENRE_NAME "
                         + " FROM GENRE g JOIN FILM_GENRES fg ON g.GENRE_ID = fg.GENRE_ID"
-                        + " WHERE fg.FILM_ID = ?"
-                , filmId
+                        + " WHERE fg.FILM_ID = ?",
+                filmId
         );
 
         while (genreRows.next()) {
@@ -130,10 +130,11 @@ public class GenreDaoSorageImpl implements GenreStorage {
             outGenre = getGenreById(genre.getId());
             log.info("установлен жанр фильма {}: {} {}", filmId, genre.getId(), genre.getName());
         } catch (DataIntegrityViolationException e) {
-            msg = String.format("Невозможно установить жанр %s фильма %s. %s"
-                    , genre.getId()
-                    , filmId
-                    , e.fillInStackTrace()
+            msg = String.format(
+                    "Невозможно установить жанр %s фильма %s. %s",
+                    genre.getId(),
+                    filmId,
+                    e.fillInStackTrace()
             );
             log.info(msg);
             throw new NoDataFoundException(msg);

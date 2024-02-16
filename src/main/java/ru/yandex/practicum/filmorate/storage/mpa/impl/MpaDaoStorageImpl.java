@@ -49,10 +49,10 @@ public class MpaDaoStorageImpl implements MpaStorage {
 
     private Mpa mapMpaRow(SqlRowSet mpaRows) {
         Mpa mpa = new Mpa(
-                mpaRows.getInt("RATING_ID")
-                , mpaRows.getString("RATING_CODE")
-                , mpaRows.getString("RATING_NAME")
-                , mpaRows.getString("RATING_DESCRIPTION")
+                mpaRows.getInt("RATING_ID"),
+                mpaRows.getString("RATING_CODE"),
+                mpaRows.getString("RATING_NAME"),
+                mpaRows.getString("RATING_DESCRIPTION")
         );
         return mpa;
     }
