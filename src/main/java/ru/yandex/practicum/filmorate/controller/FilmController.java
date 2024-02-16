@@ -82,7 +82,7 @@ public class FilmController {
         } else {
             limit = popularFilmsLimitDefaultValue;
         }
-        log.info("Got popular films list request. Limit is set to: ", limit);
+        log.info("Got popular films list request. Limit is set to: {}", limit);
         return films.getPopular(limit);
     }
 
