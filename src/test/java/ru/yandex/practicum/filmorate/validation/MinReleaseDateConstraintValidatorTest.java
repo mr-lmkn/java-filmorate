@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.validation;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.ConstraintViolation;
@@ -18,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest()
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureWebTestClient
 class MinReleaseDateConstraintValidatorTest {
 
    /* @Autowired

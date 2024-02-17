@@ -97,18 +97,24 @@ public class UserDaoStorageImpl implements UserStorage {
 
     @Override
     public void delete(Integer id) throws WrongUserDataException {
-        String doDo = "обновление пользователя";
+        String doDo = " удаление пользователя";
         log.info("Инициировано {} {}", doDo, id);
         String msg;
 
         if (id != null && id > 0) {
-            Integer updaterRows = dataSource.update(
+            Integer deleteLikesRows = dataSource.update(
+                    "DELETE FROM FILM_LIKES WHERE USER_ID = ?",
+                    id
+            );
+
+            Integer deleteUserRows = dataSource.update(
                     "DELETE FROM USERS WHERE USER_ID = ?",
                     id
             );
 
-            if (updaterRows > 0) {
+            if (deleteUserRows > 0) {
                 log.info("Пользователь {} удален", id);
+                return;
             } else {
                 msg = String.format("Нет пользователя с ID %s", id);
                 log.info(msg);
@@ -116,7 +122,7 @@ public class UserDaoStorageImpl implements UserStorage {
             }
         }
 
-        msg = String.format("Не указан 'id' %s. Обновление не возможно.", id);
+        msg = String.format("Не указан 'id' %s. Удаление не возможно.", id);
         log.info(msg);
         throw new WrongUserDataException(msg);
     }
