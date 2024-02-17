@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
@@ -18,6 +20,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @JdbcTest // указываем, о необходимости подготовить бины для работы с БД
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@AutoConfigureWebTestClient
 class UserDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
 

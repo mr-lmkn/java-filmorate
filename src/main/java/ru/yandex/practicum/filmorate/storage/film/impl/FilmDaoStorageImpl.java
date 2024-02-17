@@ -32,7 +32,9 @@ public class FilmDaoStorageImpl implements FilmStorage {
                 "SELECT  f.FILM_ID "
                         + ", f.FILM_NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION "
                         + ", f.RATING_ID, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
-                        + ", STRING_AGG (l.USER_ID, ',') as `LIKERS` "
+                        // Не получается получить данные по имени поля, почему? см mapFilmRow()
+                        + ", LISTAGG (l.USER_ID,',') as `LIKERS` "
+                        + ", (SELECT GROUP_CONCAT (l.USER_ID) FROM FILM_LIKES l WHERE f.FILM_ID = l.FILM_ID) AS lkrs "
                         + " FROM FILMS f "
                         + " LEFT JOIN RATING r ON f.RATING_ID = r.RATING_ID "
                         + " LEFT JOIN FILM_LIKES l ON f.FILM_ID = l.FILM_ID "
@@ -71,6 +73,7 @@ public class FilmDaoStorageImpl implements FilmStorage {
     public Film createFilm(Film film) throws NoDataFoundException {
         Film outFilm = new Film();
         log.info("Запись нового фильма");
+        log.info("Build    {}", film.toString());
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("FILMS")
@@ -140,8 +143,17 @@ public class FilmDaoStorageImpl implements FilmStorage {
         String msg;
 
         if (id != null && id > 0) {
+            dataSource.update(
+                    "DELETE FROM FILM_LIKES WHERE FILM_ID = ?",
+                    id
+            );
+            dataSource.update(
+                    "DELETE FROM FILM_GENRES WHERE FILM_ID = ?",
+                    id
+            );
+
             Integer updaterRows = dataSource.update(
-                    "DELETE FROM FILMS WHERE USER_ID = ?",
+                    "DELETE FROM FILMS WHERE FILM_ID = ?",
                     id
             );
 
@@ -237,7 +249,10 @@ public class FilmDaoStorageImpl implements FilmStorage {
         Set<Integer> likes = getFilmLikes(filmId);
         Set<Genre> genre = genreStorage.getGenresByFilmId(filmId);
 
-        //log.info("Набор лайков: {}", filmRows.getString("LIKERS"));
+        // ***** Тут получаю java.sql.SQLException: Invalid column name ****
+        // log.info("Набор лайков: {}", filmRows.getString("LKRS"));
+        // log.info("Набор лайков: {}", filmRows.getString("LIKERS"));
+
         /*Set likes = new HashSet<>(); //getFilmLikes(filmId);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

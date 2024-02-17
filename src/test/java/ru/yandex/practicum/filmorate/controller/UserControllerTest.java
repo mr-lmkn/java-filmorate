@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -28,10 +29,11 @@ import java.util.ArrayList;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
 @EnableWebMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
 
     User user;
@@ -115,9 +117,9 @@ class UserControllerTest {
 
         // Второй
         User user2 = User.builder()
-                .email("xmail@mail.ru")
+                .email("xmail2@mail.ru")
                 .login("User_2_Login")
-                .name("User-name")
+                .name("User-name2")
                 .birthday(LocalDate.of(2023, 01, 01))
                 .build();
 

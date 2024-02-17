@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -15,19 +16,24 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
 @EnableWebMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
 
     Film film;
@@ -47,10 +53,22 @@ class FilmControllerTest {
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
+        HashSet genres = new HashSet<Genre>();
+        genres.add(new Genre(1, "Комедия"));
+        Mpa mpa = new Mpa().builder()
+                .id(1)
+                .ratingCode("G")
+                .ratingName("General Audiences")
+                .description("All ages admitted. Nothing that would offend parents for viewing by children.")
+                .build();
+        LocalDate dateRelease = LocalDate.of(1895, 12, 30);
         film = Film.builder()
                 .name("Film-name")
                 .description("Descripton")
                 .duration(15)
+                .mpa(mpa)
+                .genres(genres)
+                .releaseDate(dateRelease)
                 .build();
 
         // controller = new FilmController();
@@ -125,11 +143,23 @@ class FilmControllerTest {
                 .expectStatus().isOk();
 
         // Второй
+        LocalDate dateRelease = LocalDate.of(1895, 12, 30);
+        HashSet genres = new HashSet<Genre>();
+        genres.add(new Genre(1, "Комедия"));
+        Mpa mpa = new Mpa().builder()
+                .id(1)
+                .ratingCode("G")
+                .ratingName("General Audiences")
+                .description("All ages admitted. Nothing that would offend parents for viewing by children.")
+                .build();
         Film film2 = Film.builder()
                 .id(2)
                 .name("Film-name-2")
                 .description("Descripton")
                 .duration(15)
+                .genres(genres)
+                .mpa(mpa)
+                .releaseDate(dateRelease)
                 .build();
 
         webClient
