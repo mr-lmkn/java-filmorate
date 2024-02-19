@@ -92,24 +92,6 @@ public class GenreDaoSorageImpl implements GenreStorage {
             for (Genre genre : setGenre) {
                 outSet.add(addGenreToFilmId(filmId, genre));
             }
-            /*log.info("удаляем ненужные");
-            // String deleteQery = //String.format(
-            //     "DELETE FROM FILM_GENRES g WHERE g.FILM_ID = ? AND g.GENRE_ID NOT IN (?)" ;
-            //  , String.join(",", Collections.nCopies(setGenre.size(), "?"))
-            //);
-            //dataSource.update(deleteQery, filmId, genreIds.toArray());
-
-            MapSqlParameterSource parameters = new MapSqlParameterSource();
-           // parameters.addValue("filmId", filmId);
-            parameters.addValue("genreIds", genreIds.get(0));
-
-            Map<String, Object> paramMap = new HashMap<String, Object>();
-            paramMap.put("genreIds", genreIds);
-
-Странно тут с параметрами. Не работает маппинг. Идея была - удалить все лишние после того, как успешно завершится добавление.
-
-            dataSource.update("DELETE FROM FILM_GENRES g WHERE g.FILM_ID = "+filmId+" AND g.GENRE_ID NOT IN (:genreIds)",
-                    paramMap); */
         }
         return outSet;
     }

@@ -22,7 +22,6 @@ import java.util.*;
 @Slf4j
 public class FilmDaoStorageImpl implements FilmStorage {
     private final JdbcTemplate dataSource;
-    // private MpaStorage mpaStorage; - переделал слегка мапинг
     private GenreStorage genreStorage;
 
     @Override
@@ -32,7 +31,7 @@ public class FilmDaoStorageImpl implements FilmStorage {
                 "SELECT  f.FILM_ID "
                         + ", f.FILM_NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION "
                         + ", f.RATING_ID, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
-                        // Не получается получить данные по имени поля, почему? см mapFilmRow()
+                        // Не получается получить данные по имени поля
                         + ", LISTAGG (l.USER_ID,',') as `LIKERS` "
                         + ", (SELECT GROUP_CONCAT (l.USER_ID) FROM FILM_LIKES l WHERE f.FILM_ID = l.FILM_ID) AS lkrs "
                         + " FROM FILMS f "
@@ -249,22 +248,6 @@ public class FilmDaoStorageImpl implements FilmStorage {
         Set<Integer> likes = getFilmLikes(filmId);
         Set<Genre> genre = genreStorage.getGenresByFilmId(filmId);
 
-        // ***** Тут получаю java.sql.SQLException: Invalid column name ****
-        // log.info("Набор лайков: {}", filmRows.getString("LKRS"));
-        // log.info("Набор лайков: {}", filmRows.getString("LIKERS"));
-
-        /*Set likes = new HashSet<>(); //getFilmLikes(filmId);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            likes = objectMapper.readValue(filmRows.getString("LIKES"), Set.class);
-        } catch (JsonProcessingException ignore) {} */
-
-       /* Mpa mpa = new Mpa();
-        try {
-            mpa = mpaStorage.getMpaById(filmRows.getInt("RATING_ID"));
-        } catch (NoDataFoundException ignore) {
-        } */
-
         Film film = Film.builder()
                 .id(filmId)
                 .name(filmRows.getString("FILM_NAME"))
@@ -310,7 +293,6 @@ public class FilmDaoStorageImpl implements FilmStorage {
         }
         log.info("Конец списка лайков...");
         return likes;
-
     }
 
 }
