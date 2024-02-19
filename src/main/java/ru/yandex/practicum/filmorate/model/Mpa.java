@@ -11,11 +11,11 @@ import org.springframework.lang.Nullable;
 @Getter
 @Setter
 public class Mpa {
-    Integer id;
+    private Integer id;
     @Nullable
-    String ratingCode;
+    private String ratingCode;
     @Nullable
-    String ratingName;
+    private String ratingName;
     @Nullable
-    String description;
+    private String description;
 }
