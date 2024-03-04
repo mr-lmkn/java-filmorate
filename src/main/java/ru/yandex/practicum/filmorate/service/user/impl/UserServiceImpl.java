@@ -69,6 +69,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public ArrayList<User> getAllUserFriends(Integer userId) throws NoDataFoundException {
+        users.getUserById(userId); // Проверяем, что пользователь есть
+
         log.info("Зарос всех друзей пользователя");
         ArrayList<User> ret = new ArrayList<>();
         try {
@@ -92,6 +94,12 @@ public class UserServiceImpl implements UserService {
             outList.add(users.getUserById(friend));
         }
         return outList;
+    }
+
+    @Override
+    public void deleteUser(Integer userId) throws NoDataFoundException {
+        log.info("Зарос удаления дружбы");
+        users.deteteUser(userId);
     }
 
 }
