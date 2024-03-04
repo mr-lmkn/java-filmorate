@@ -26,6 +26,6 @@ public interface UserStorage {
 
     ArrayList<Integer> getAllUserFriends(Integer userId) throws NoDataFoundException;
 
-
     void deteteUser(Integer userId) throws NoDataFoundException;
+
 }
