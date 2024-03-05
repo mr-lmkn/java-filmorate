@@ -44,7 +44,7 @@ public class FeedDaoImpl implements FeedStorage {
         );
         if (rows.next()) {
             FeedEvent event = mapEventRow(rows);
-            log.info("Событие: {} название {}", event.getEventType());
+            log.info("Событие: {}", event.getEventType());
             eventsList.add(event);
             return eventsList;
         } else {
