@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
+import ru.yandex.practicum.filmorate.model.FeedEventOperation;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
@@ -18,6 +21,7 @@ import java.util.List;
 public class FilmServiceImpl implements FilmService {
 
     private FilmStorage filmStorage;
+    private FeedService feed;
 
     @Override
     public List<Film> getAllFilms() {
@@ -52,13 +56,17 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film addLike(Integer filmId, Integer userId) throws NoDataFoundException {
         log.info("Запрос добавления лайка фильму");
-        return filmStorage.addLike(filmId, userId);
+        Film outFilm = filmStorage.addLike(filmId, userId);
+        feed.saveEvent(userId, FeedEventType.ADD, FeedEventOperation.FRIEND, filmId);
+        return outFilm;
     }
 
     @Override
     public Film deleteLike(Integer filmId, Integer userId) throws NoDataFoundException {
         log.info("Запрос удаления лайка фильма");
-        return filmStorage.deleteLike(filmId, userId);
+        Film outFilm = filmStorage.deleteLike(filmId, userId);
+        feed.saveEvent(userId, FeedEventType.REMOVE, FeedEventOperation.FRIEND, filmId);
+        return outFilm;
     }
 
     @Override
