@@ -85,4 +85,10 @@ public class UserController {
         return users.getIntersectFriends(id, comparedUserId);
     }
 
+    @DeleteMapping("/{id}") // удаление из друзей
+    public void deleteUser(@PathVariable int id) throws NoDataFoundException {
+        log.info("Got delete user {} request", id);
+        users.deleteUser(id);
+    }
+
 }

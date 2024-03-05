@@ -248,6 +248,46 @@ public class UserDaoStorageImpl implements UserStorage {
         return users;
     }
 
+    @Override
+    public void deteteUser(Integer userId) throws NoDataFoundException {
+        String doDo = "удаление пользователя";
+        log.info("Инициировано {} {}", doDo, userId);
+
+        if (userId != null && userId > 0) {
+            dataSource.update(
+                    "DELETE FROM FILM_LIKES "
+                            + " WHERE USER_ID = ?",
+                    userId
+            );
+            dataSource.update(
+                    "DELETE FROM USER_FRIENDS "
+                            + " WHERE USER_ID = ? OR FRIEND_ID = ?",
+                    userId,
+                    userId
+            );
+
+            Integer deletedRows = dataSource.update(
+                    "DELETE FROM USERS "
+                            + " WHERE USER_ID = ?",
+                    userId
+            );
+
+            if (deletedRows > 0) {
+                log.info("Операция {} выполнена уcпешно", doDo);
+                return;
+            }
+
+            String msg = String.format("Нет записи о пользователе %s. Удаление не возможно.", userId);
+            log.info(msg);
+            throw new NoDataFoundException(msg);
+        }
+
+        String msg = String.format("Нет пользователя с 'id' %s. Удаление не возможно.", userId);
+        log.info(msg);
+        throw new NoDataFoundException(msg);
+
+    }
+
     private User mapUserRow(SqlRowSet userRows) {
         Integer userId = userRows.getInt("USER_ID");
         Set<Integer> userFriendsList = new HashSet<Integer>();

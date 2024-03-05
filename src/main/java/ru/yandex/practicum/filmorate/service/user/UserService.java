@@ -28,4 +28,5 @@ public interface UserService {
 
     ArrayList<User> getIntersectFriends(Integer userId, Integer compareUserId) throws NoDataFoundException;
 
+    void deleteUser(Integer userId) throws NoDataFoundException;
 }

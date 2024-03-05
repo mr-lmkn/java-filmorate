@@ -83,9 +83,7 @@ public class GenreDaoSorageImpl implements GenreStorage {
                 .map(Genre::getId)
                 .collect(Collectors.toList());
 
-        log.info("удаляем все");
-        String deleteQery = "DELETE FROM FILM_GENRES g WHERE g.FILM_ID = ? ";
-        dataSource.update(deleteQery, filmId);
+        deleteAllFilmGeneres(filmId);
 
         if (!genreIds.isEmpty()) {
             log.info("Добавляем");
@@ -125,6 +123,13 @@ public class GenreDaoSorageImpl implements GenreStorage {
         return outGenre;
     }
 
+    @Override
+    public void deleteAllFilmGeneres(Integer filmId) {
+        log.info("Удаляем все жанры");
+        String deleteQery = "DELETE FROM FILM_GENRES g WHERE g.FILM_ID = ? ";
+        dataSource.update(deleteQery, filmId);
+    }
+
     private Genre mapGenreRow(SqlRowSet genreRows) {
         Genre genre = new Genre(
                 genreRows.getInt("GENRE_ID"),
@@ -132,4 +137,5 @@ public class GenreDaoSorageImpl implements GenreStorage {
         );
         return genre;
     }
+
 }
