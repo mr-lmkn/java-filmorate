@@ -1,18 +1,24 @@
 package ru.yandex.practicum.filmorate.storage.user.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
-
-import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -76,8 +82,7 @@ public class UserDaoStorageImpl implements UserStorage {
                     user.getEmail(),
                     user.getName(),
                     user.getBirthday(),
-                    id
-            );
+                    id);
 
             if (updaterRows > 0) {
                 log.info("Операция {} выполнена уcпешно", doDo);
@@ -104,13 +109,11 @@ public class UserDaoStorageImpl implements UserStorage {
         if (id != null && id > 0) {
             Integer deleteLikesRows = dataSource.update(
                     "DELETE FROM FILM_LIKES WHERE USER_ID = ?",
-                    id
-            );
+                    id);
 
             Integer deleteUserRows = dataSource.update(
                     "DELETE FROM USERS WHERE USER_ID = ?",
-                    id
-            );
+                    id);
 
             if (deleteUserRows > 0) {
                 log.info("Пользователь {} удален", id);
@@ -138,13 +141,12 @@ public class UserDaoStorageImpl implements UserStorage {
                             + " WHEN NOT MATCHED THEN "
                             + "   INSERT (USER_ID, FRIEND_ID, CONFIRMED) VALUES(?, ?, ?)"
                             + " WHEN MATCHED THEN "
-                            + "   UPDATE SET USER_ID = ?, FRIEND_ID = ?, CONFIRMED = ?;"
-            );
+                            + "   UPDATE SET USER_ID = ?, FRIEND_ID = ?, CONFIRMED = ?;");
 
             try {
                 insertedRows = dataSource.update(
                         merge,
-                        userId, friendId,// merged key data
+                        userId, friendId, // merged key data
                         userId, friendId, confirmed, // insert
                         userId, friendId, confirmed // update
                 );
@@ -178,8 +180,7 @@ public class UserDaoStorageImpl implements UserStorage {
                             + " AND FRIEND_ID = ? ",
                     true,
                     userId,
-                    friendId
-            );
+                    friendId);
 
             addFriend(friendId, userId, true);
 
@@ -210,8 +211,7 @@ public class UserDaoStorageImpl implements UserStorage {
                             + " WHERE USER_ID = ?"
                             + " AND FRIEND_ID = ?",
                     userId,
-                    friendId
-            );
+                    friendId);
 
             if (updaterRows > 0) {
                 log.info("Операция {} выполнена уcпешно", doDo);
@@ -237,8 +237,7 @@ public class UserDaoStorageImpl implements UserStorage {
                         + " FROM USER_FRIENDS f "
                         + " WHERE f.USER_ID = ? "
                         + " AND CONFIRMED = true; ",
-                userId
-        );
+                userId);
         while (friendsRows.next()) {
             Integer friendId = friendsRows.getInt("FRIEND_ID");
             users.add(friendId);
@@ -257,20 +256,17 @@ public class UserDaoStorageImpl implements UserStorage {
             dataSource.update(
                     "DELETE FROM FILM_LIKES "
                             + " WHERE USER_ID = ?",
-                    userId
-            );
+                    userId);
             dataSource.update(
                     "DELETE FROM USER_FRIENDS "
                             + " WHERE USER_ID = ? OR FRIEND_ID = ?",
                     userId,
-                    userId
-            );
+                    userId);
 
             Integer deletedRows = dataSource.update(
                     "DELETE FROM USERS "
                             + " WHERE USER_ID = ?",
-                    userId
-            );
+                    userId);
 
             if (deletedRows > 0) {
                 log.info("Операция {} выполнена уcпешно", doDo);
@@ -302,8 +298,7 @@ public class UserDaoStorageImpl implements UserStorage {
                 userRows.getString("LOGIN"),
                 userRows.getString("USER_NAME"),
                 userRows.getDate("BIRTHDAY").toLocalDate(),
-                userFriendsList
-        );
+                userFriendsList);
         return user;
     }
 
