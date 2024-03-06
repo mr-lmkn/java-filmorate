@@ -29,4 +29,7 @@ public interface FilmService {
     List<Film> getSearch(String query, String by);
 
     List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId);
+
+    List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
+
 }

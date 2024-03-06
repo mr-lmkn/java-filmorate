@@ -84,4 +84,7 @@ public class FilmServiceImpl implements FilmService {
     public List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId) {
         return filmStorage.getCommonFavouriteFilms(userId, friendId);
     }
+
+    List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
+
 }

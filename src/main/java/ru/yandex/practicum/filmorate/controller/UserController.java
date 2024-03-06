@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
@@ -90,5 +91,7 @@ public class UserController {
         log.info("Got delete user {} request", id);
         users.deleteUser(id);
     }
+
+    List<Film> getRecommendations(int userId) throws NoDataFoundException;
 
 }
