@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MpaController {
 
-    private MpaService mpaService;
+    private final MpaService mpaService;
 
     @GetMapping()
     public List<Mpa> getAll() {

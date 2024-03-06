@@ -21,8 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserStorage users;
-    private FeedService feed;
+    private final UserStorage users;
+    private final FeedService feed;
 
     @Override
     public List<User> getAllUsers() {
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         users.addFriend(userId, friendId, true);
         users.addFriend(friendId, userId, false);
         User outUser = users.getUserById(userId);
-        feed.saveEvent(userId, FeedEventType.ADD, FeedEventOperation.FRIEND, friendId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.ADD, friendId);
         return outUser;
     }
 
@@ -67,14 +67,14 @@ public class UserServiceImpl implements UserService {
         log.info("Зарос подтверждения дружбы");
         users.confirmFriend(userId, friendId);
         User outUser = users.getUserById(userId);
-        feed.saveEvent(userId, FeedEventType.UPDATE, FeedEventOperation.FRIEND, friendId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.UPDATE, friendId);
         return outUser;
     }
 
     public User deteteFriend(Integer userId, Integer friendId) throws NoDataFoundException {
         log.info("Зарос удаления дружбы");
         User outUser = users.deteteFriend(userId, friendId);
-        feed.saveEvent(userId, FeedEventType.REMOVE, FeedEventOperation.FRIEND, friendId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.REMOVE, friendId);
         return outUser;
     }
 

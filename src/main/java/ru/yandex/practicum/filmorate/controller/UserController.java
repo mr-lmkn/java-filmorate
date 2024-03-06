@@ -20,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
 
-    private UserService users;
-    private FeedService feed;
+    private final UserService users;
+    private final FeedService feed;
 
     @GetMapping()
     public List<User> getAll() {

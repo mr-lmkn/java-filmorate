@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class FeedServiceImpl implements FeedService {
-    private FeedStorage feedStorage;
+    private final FeedStorage feedStorage;
 
     @Override
     public List<FeedEvent> getEventsByUserId(Integer id) throws NoDataFoundException {
@@ -30,6 +30,7 @@ public class FeedServiceImpl implements FeedService {
                           FeedEventOperation eventOperation,
                           Integer entityId
     ) {
+        log.info("Сохраняем евент пользователя {} {} {} {}", userId, eventType, eventOperation, entityId);
         FeedEvent event = FeedEvent.builder()
                 .userId(userId)
                 .eventType(eventType)

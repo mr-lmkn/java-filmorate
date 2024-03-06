@@ -20,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
-    private FilmStorage filmStorage;
-    private FeedService feed;
+    private final FilmStorage filmStorage;
+    private final FeedService feed;
 
     @Override
     public List<Film> getAllFilms() {
@@ -57,7 +57,7 @@ public class FilmServiceImpl implements FilmService {
     public Film addLike(Integer filmId, Integer userId) throws NoDataFoundException {
         log.info("Запрос добавления лайка фильму");
         Film outFilm = filmStorage.addLike(filmId, userId);
-        feed.saveEvent(userId, FeedEventType.ADD, FeedEventOperation.FRIEND, filmId);
+        feed.saveEvent(userId, FeedEventType.LIKE, FeedEventOperation.ADD, filmId);
         return outFilm;
     }
 
@@ -65,7 +65,7 @@ public class FilmServiceImpl implements FilmService {
     public Film deleteLike(Integer filmId, Integer userId) throws NoDataFoundException {
         log.info("Запрос удаления лайка фильма");
         Film outFilm = filmStorage.deleteLike(filmId, userId);
-        feed.saveEvent(userId, FeedEventType.REMOVE, FeedEventOperation.FRIEND, filmId);
+        feed.saveEvent(userId, FeedEventType.LIKE, FeedEventOperation.REMOVE, filmId);
         return outFilm;
     }
 
@@ -74,6 +74,11 @@ public class FilmServiceImpl implements FilmService {
         log.info("Запрос популярных фильмов");
         log.info("Задано ограничение вывода: {}", limit);
         return filmStorage.getPopular(limit);
+    }
+
+    @Override
+    public List<Film> getFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException {
+        return filmStorage.findFilmsByDirector(directorId, sortBy);
     }
 
 }

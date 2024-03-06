@@ -24,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class FeedDaoImpl implements FeedStorage {
     private final JdbcTemplate dataSource;
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
 
     @Override
     public List<FeedEvent> getEventsByUserId(Integer id) throws NoDataFoundException {
@@ -42,14 +42,10 @@ public class FeedDaoImpl implements FeedStorage {
                         + " ORDER BY TIMESTAMP ",
                 id
         );
-        if (rows.next()) {
+        while (rows.next()) {
             FeedEvent event = mapEventRow(rows);
             log.info("Событие: {}", event.getEventType());
             eventsList.add(event);
-            return eventsList;
-        } else {
-            String msg = String.format("Нет событий у пользователя 'id'=%s.", id);
-            log.info(msg);
         }
         return eventsList;
     }
@@ -61,13 +57,19 @@ public class FeedDaoImpl implements FeedStorage {
                 .usingGeneratedKeyColumns("EVENT_ID");
         Map<String, Object> parameters = mapEventQueryParameters(event);
         Integer id = simpleJdbcInsert.executeAndReturnKey(parameters).intValue();
-        log.info("Generated event-id - " + id);
+        log.info("Generated event-id: " + id);
     }
 
     private FeedEvent mapEventRow(SqlRowSet eventRows) {
         FeedEventType eventType = FeedEventType.valueOf(eventRows.getString("EVENT_TYPE"));
         FeedEventOperation eventOperation = FeedEventOperation.valueOf(
                 eventRows.getString("EVENT_OPERATION"));
+
+        log.info("Получено событие: USER_ID = {}, EVENT_TYPE = {}, EVENT_OPERATION = {}",
+                eventRows.getInt("USER_ID"),
+                eventType,
+                eventOperation);
+
         return FeedEvent.builder()
                 .eventId(eventRows.getInt("EVENT_ID"))
                 .userId(eventRows.getInt("USER_ID"))
@@ -86,7 +88,14 @@ public class FeedDaoImpl implements FeedStorage {
         parameters.put("EVENT_OPERATION", event.getOperation().toString());
         parameters.put("ENTITY_ID", event.getEntityId());
         parameters.put("TIMESTAMP", event.getTimestamp());
+
+        log.info("Сохраняем событие: USER_ID = {}, EVENT_TYPE = {}, EVENT_OPERATION = {}",
+                event.getUserId(),
+                event.getEventType().toString(),
+                event.getOperation().toString());
+
         return parameters;
     }
 
 }
+

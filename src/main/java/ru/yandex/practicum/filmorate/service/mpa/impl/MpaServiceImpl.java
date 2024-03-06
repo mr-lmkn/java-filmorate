@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class MpaServiceImpl implements MpaService {
-    private MpaStorage mpaStorage;
+    private final MpaStorage mpaStorage;
 
     @Override
     public Mpa getMpaById(Integer id) throws NoDataFoundException {
