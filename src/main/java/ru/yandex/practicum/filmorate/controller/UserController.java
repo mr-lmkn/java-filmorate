@@ -92,6 +92,9 @@ public class UserController {
         users.deleteUser(id);
     }
 
-    List<Film> getRecommendations(int userId) throws NoDataFoundException;
+    @GetMapping("/{id}/recommendations") //рекомендации
+    public List<Film> getRecommendations(@PathVariable int id) throws NoDataFoundException {
+        return users.getRecommendations(id);
+    }
 
 }
