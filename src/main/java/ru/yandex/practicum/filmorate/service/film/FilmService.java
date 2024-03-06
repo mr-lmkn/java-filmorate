@@ -24,4 +24,5 @@ public interface FilmService {
     //— возвращает список из первых count фильмов по количеству лайков. Если значение параметра count не задано, верните первые 10.
     List<Film> getPopular(Integer limit) throws NoDataFoundException;
 
+    List<Film> getFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException;
 }

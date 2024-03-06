@@ -68,4 +68,9 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.getPopular(limit);
     }
 
+    @Override
+    public List<Film> getFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException {
+        return filmStorage.findFilmsByDirector(directorId, sortBy);
+    }
+
 }
