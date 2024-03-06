@@ -3,16 +3,19 @@ package ru.yandex.practicum.filmorate.storage.film.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.InvalidResultSetAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film_directors.FilmDirectorsStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 
 import java.util.*;
@@ -23,6 +26,7 @@ import java.util.*;
 public class FilmDaoStorageImpl implements FilmStorage {
     private final JdbcTemplate dataSource;
     private GenreStorage genreStorage;
+    private final FilmDirectorsStorage filmDirectorsStorage;
 
     @Override
     public List<Film> getAllFilms() {
@@ -34,9 +38,13 @@ public class FilmDaoStorageImpl implements FilmStorage {
                         // Не получается получить данные по имени поля
                         + ", LISTAGG (l.USER_ID,',') as `LIKERS` "
                         + ", (SELECT GROUP_CONCAT (l.USER_ID) FROM FILM_LIKES l WHERE f.FILM_ID = l.FILM_ID) AS lkrs "
+                        + ", GROUP_CONCAT(d.DIRECTOR_ID) as directors_ids"
+                        + ", GROUP_CONCAT(d.DIRECTOR_NAME) as directors_names"
                         + " FROM FILMS f "
                         + " LEFT JOIN RATING r ON f.RATING_ID = r.RATING_ID "
                         + " LEFT JOIN FILM_LIKES l ON f.FILM_ID = l.FILM_ID "
+                        + " LEFT JOIN FILM_DIRECTOR AS fd ON fd.FILM_ID = f.FILM_ID"
+                        + " LEFT JOIN DIRECTOR AS d on d.DIRECTOR_ID = fd.DIRECTOR_ID"
                         + " GROUP BY f.FILM_ID "
                         + ", f.FILM_NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION "
                         + ", f.RATING_ID, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
@@ -53,9 +61,16 @@ public class FilmDaoStorageImpl implements FilmStorage {
     @Override
     public Film getFilmById(Integer id) throws NoDataFoundException {
         SqlRowSet filmRows = dataSource.queryForRowSet(
-                " SELECT f.*, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
+                " SELECT f.FILM_ID " +
+                        ", f.FILM_NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION " +
+                        ", f.RATING_ID, r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
+                        + ", GROUP_CONCAT(d.DIRECTOR_ID) as directors_ids"
+                        + ", GROUP_CONCAT(d.DIRECTOR_NAME) as directors_names"
                         + " FROM FILMS f LEFT JOIN RATING r ON f.RATING_ID = r.RATING_ID"
-                        + " WHERE FILM_ID = ? ",
+                        + " LEFT JOIN FILM_DIRECTOR AS fd ON fd.FILM_ID = f.FILM_ID"
+                        + " LEFT JOIN DIRECTOR AS d on d.DIRECTOR_ID = fd.DIRECTOR_ID"
+                        + " WHERE f.FILM_ID = ? "
+                        + "GROUP BY f.FILM_ID",
                 id);
         if (filmRows.next()) {
             Film film = mapFilmRow(filmRows);
@@ -80,6 +95,8 @@ public class FilmDaoStorageImpl implements FilmStorage {
         Map<String, Object> parameters = mapFilmQueryParameters(film);
         Integer id = simpleJdbcInsert.executeAndReturnKey(parameters).intValue();
         log.info("Generated filmId - " + id);
+
+        filmDirectorsStorage.create(id, getDirectorsIds(film));
 
         log.info(film.getGenres().toString());
         Set<Genre> newGenres = genreStorage.linkGenresToFilmId(id, film.getGenres());
@@ -122,12 +139,14 @@ public class FilmDaoStorageImpl implements FilmStorage {
 
             if (updaterRows > 0) {
                 log.info("Операция {} выполнена уcпешно", doDo);
+                filmDirectorsStorage.update(id, getDirectorsIds(film));
                 return getFilmById(id);
             } else {
                 String msg = String.format("Нет фильма с 'id' %s. Обновление не возможно.", id);
                 log.info(msg);
                 throw new NoDataFoundException(msg);
             }
+
         }
 
         String msg = String.format("Не указан 'id' %s. Обновление не возможно.", id);
@@ -222,9 +241,14 @@ public class FilmDaoStorageImpl implements FilmStorage {
                         + ")"
                         + " SELECT f.* "
                         + " , r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
+                        + ", GROUP_CONCAT(d.DIRECTOR_ID) as directors_ids"
+                        + ", GROUP_CONCAT(d.DIRECTOR_NAME) as directors_names"
                         + " FROM FILMS f "
                         + " JOIN RATING r ON r.RATING_ID = f.RATING_ID "
                         + " LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID "
+                        + " LEFT JOIN FILM_DIRECTOR AS fd ON fd.FILM_ID = f.FILM_ID"
+                        + " LEFT JOIN DIRECTOR AS d on d.DIRECTOR_ID = fd.DIRECTOR_ID"
+                        + " GROUP BY f.FILM_ID "
                         + " ORDER BY `LIKES_CNT` DESC NULLS LAST"
                         + " LIMIT ?;",
                 limit
@@ -243,10 +267,90 @@ public class FilmDaoStorageImpl implements FilmStorage {
         return films;
     }
 
+    @Override
+    public List<Film> findFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException {
+        String commonSqlFirstPart = "select f.FILM_ID AS film_id," +
+                " f.FILM_NAME AS film_name," +
+                " f.DESCRIPTION AS description," +
+                " f.RELEASE_DATE AS release_date," +
+                " f.DURATION AS duration," +
+                " f.rating_id AS rating_id, " +
+                " rating.rating_name AS rating_name, " +
+                " rating.rating_code AS rating_code, " +
+                " rating.rating_description AS rating_description, " +
+                " GROUP_CONCAT(d.director_id) AS directors_ids," +
+                " GROUP_CONCAT(d.director_name) AS directors_names,";
+        String commonSqlSecondPart = " from FILMS as f " +
+                " left join rating on f.rating_id = rating.rating_id" +
+                " join film_director as fd on fd.film_id = f.film_id" +
+                " join director as d on d.director_id = fd.director_id";
+        String commonSqlThirdPart = " where fd.director_id = ?" +
+                " GROUP BY film_id";
+
+        String sortByLikeSqlFirstPart = " count(fl.film_id) as likes_count";
+        String sortByLikeSqlSecondPart = " left join film_likes as fl on fl.film_id = f.film_id";
+        String sortByLikeSqlThirdPart = " ORDER BY likes_count DESC";
+
+        String sortByYearSql = " ORDER BY release_date";
+
+        StringBuilder sqlSb = new StringBuilder();
+        String sql;
+        if (sortBy.equals("year")) {
+            sql = sqlSb
+                    .append(commonSqlFirstPart)
+                    .append(commonSqlSecondPart)
+                    .append(commonSqlThirdPart)
+                    .append(sortByYearSql)
+                    .toString();
+        } else {
+            sql = sqlSb
+                    .append(commonSqlFirstPart)
+                    .append(sortByLikeSqlFirstPart)
+                    .append(commonSqlSecondPart)
+                    .append(sortByLikeSqlSecondPart)
+                    .append(commonSqlThirdPart)
+                    .append(sortByLikeSqlThirdPart)
+                    .toString();
+        }
+
+        SqlRowSet filmsRows = dataSource.queryForRowSet(sql, directorId);
+        if (filmsRows.next()) {
+            List<Film> films = new ArrayList<>();
+            do {
+                Film film = mapFilmRow(filmsRows);
+                films.add(film);
+                log.info("Найден фильм: {} {}", film.getId(), film.getName());
+            } while (filmsRows.next());
+            log.info("Конец списка фильмов");
+            return films;
+        } else {
+            throw new NoDataFoundException("Список фильмов пустой");
+        }
+    }
+
     private Film mapFilmRow(SqlRowSet filmRows) {
         Integer filmId = filmRows.getInt("FILM_ID");
         Set<Integer> likes = getFilmLikes(filmId);
         Set<Genre> genre = genreStorage.getGenresByFilmId(filmId);
+
+        TreeSet<Director> directors = new TreeSet<>(Comparator.comparing(Director::getId));
+        try {
+            String rsDirectorsId = filmRows.getString("directors_ids");
+            String rsDirectorsName = filmRows.getString("directors_names");
+            if (rsDirectorsId != null) {
+                String[] directorsId = rsDirectorsId.split(",");
+                String[] directorName = rsDirectorsName.split(",");
+                for (int i = 0; i < directorsId.length; i++) {
+                    Director director = Director.builder()
+                            .id(Integer.parseInt(directorsId[i]))
+                            .name(directorName[i])
+                            .build();
+                    directors.add(director);
+                }
+            }
+        } catch (InvalidResultSetAccessException e) {
+            log.info("В запросе не запрошены режиссеры");
+        }
 
         Film film = Film.builder()
                 .id(filmId)
@@ -261,6 +365,7 @@ public class FilmDaoStorageImpl implements FilmStorage {
                 )
                 .genres(genre)
                 .likes(likes)
+                .directors(directors)
                 .build();
         return film;
     }
@@ -293,6 +398,17 @@ public class FilmDaoStorageImpl implements FilmStorage {
         }
         log.info("Конец списка лайков...");
         return likes;
+    }
+
+    private List<Integer> getDirectorsIds(Film film) {
+        Set<Director> directors = film.getDirectors();
+        List<Integer> directorIds = new ArrayList<>();
+        if (directors != null) {
+            for (Director director : directors) {
+                directorIds.add(director.getId());
+            }
+        }
+        return directorIds;
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
@@ -84,6 +85,15 @@ public class FilmController {
         }
         log.info("Got popular films list request. Limit is set to: {}", limit);
         return films.getPopular(limit);
+    }
+
+    @GetMapping("/director/{directorId}")
+    @Validated
+    public List<Film> getFilmsByDirector(@Valid @PathVariable Integer directorId,
+                                         @RequestParam(defaultValue = "year") String sortBy)
+                                                                 throws NoDataFoundException {
+
+        return films.getFilmsByDirector(directorId, sortBy);
     }
 
 }
