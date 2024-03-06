@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.storage.review.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class ReviewDaoStorageImpl implements ReviewStorage {
                 + "AND EXISTS (SELECT 1 FROM films WHERE film_id = ?) ";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(create, new String[] { "review_id" });
+            PreparedStatement stmt = connection.prepareStatement(create, new String[]{"review_id"});
             stmt.setString(1, review.getContent());
             stmt.setBoolean(2, review.getIsPositive());
             stmt.setInt(3, review.getFilmId());
