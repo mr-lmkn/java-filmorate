@@ -87,8 +87,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/recommendations") //рекомендации
-    public List<Film> getRecommendations(@PathVariable int userId, @PathVariable String id) throws NoDataFoundException {
-        return users.getRecommendations(userId);
+    public List<Film> getRecommendations(@PathVariable int id) throws NoDataFoundException {
+        return users.getRecommendations(id);
     }
 
 }
