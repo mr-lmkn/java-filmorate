@@ -6,14 +6,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
@@ -33,17 +30,29 @@ public class ReviewDaoStorageImpl implements ReviewStorage {
     }
 
     @Override
-    @Transactional
     public Review createReview(Review review) throws NoDataFoundException {
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("review")
-                .usingGeneratedKeyColumns("review_id");
-        try {
-            int reviewId = simpleJdbcInsert.executeAndReturnKey(review.toMap()).intValue();
-            review.setReviewId(reviewId);
-        } catch (DataAccessException e) {
-            throw new NoDataFoundException("user id = " + review.getUserId() + " not found");
+        String create = "INSERT INTO review (content, is_positive, film_id, user_id, useful) "
+                + "SELECT ?, ?, ?, ?, ? FROM dual WHERE EXISTS (SELECT 1 FROM users WHERE user_id = ?) "
+                + "AND EXISTS (SELECT 1 FROM films WHERE film_id = ?) ";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(create, new String[] { "review_id" });
+            stmt.setString(1, review.getContent());
+            stmt.setBoolean(2, review.getIsPositive());
+            stmt.setInt(3, review.getFilmId());
+            stmt.setInt(4, review.getUserId());
+            stmt.setInt(5, 0);
+            stmt.setInt(6, review.getUserId());
+            stmt.setInt(7, review.getFilmId());
+            return stmt;
+        }, keyHolder);
+
+        if (keyHolder.getKey() == null) {
+            throw new NoDataFoundException(
+                    "Can't create review with userID = " + review.getUserId() + " and filmId = " + review.getFilmId());
         }
+        review.setReviewId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+
         return review;
     }
 
