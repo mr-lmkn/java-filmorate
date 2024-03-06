@@ -68,4 +68,8 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.getPopular(limit);
     }
 
+    public List<Film> getRecommendations(Integer userId) throws NoDataFoundException {
+        return filmStorage.getRecommendations(userId);
+    }
+
 }

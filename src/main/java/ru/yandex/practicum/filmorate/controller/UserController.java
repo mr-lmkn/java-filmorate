@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
@@ -83,6 +84,11 @@ public class UserController {
             throws NoDataFoundException {
         log.info("Got all user {} friends request", id);
         return users.getIntersectFriends(id, comparedUserId);
+    }
+
+    @GetMapping("/{id}/recommendations") //рекомендации
+    public List<Film> getRecommendations(@PathVariable int userId, @PathVariable String id) throws NoDataFoundException {
+        return users.getRecommendations(userId);
     }
 
 }

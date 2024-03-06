@@ -23,4 +23,5 @@ public interface FilmStorage {
 
     List<Film> getPopular(Integer limit) throws NoDataFoundException;
 
+    List<Film> getRecommendations(int userId) throws NoDataFoundException;
 }
