@@ -102,7 +102,7 @@ public class FilmController {
             defaultValue = "director,title", required = false) String by) {
         return films.getSearch(query, by);
     }
-  
+
     @GetMapping("/common")
     @Validated
     public List<Film> getCommonFavouriteFilms(@Valid @RequestParam Integer userId,
