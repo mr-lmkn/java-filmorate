@@ -328,6 +328,37 @@ public class FilmDaoStorageImpl implements FilmStorage {
         }
     }
 
+    @Override
+    public List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId) {
+        String sql = "select f.*," +
+                " rating.rating_name AS rating_name, " +
+                " rating.rating_code AS rating_code, " +
+                " rating.rating_description AS rating_description, " +
+                " GROUP_CONCAT(d.director_id) AS directors_ids," +
+                " GROUP_CONCAT(d.director_name) AS directors_names," +
+                " COUNT(fl3.film_id) as like_count" +
+                " from films as f" +
+                " join film_likes as fl1 on f.film_id = fl1.film_id" +
+                " join film_likes as fl2 on fl1.film_id = fl2.film_id" +
+                " left join film_likes as fl3 on f.film_id = fl3.film_id" +
+                " left join rating on f.rating_id = rating.rating_id" +
+                " left join film_director as fd on fd.film_id = f.film_id" +
+                " left join director as d on d.director_id = fd.director_id" +
+                " where fl1.user_id = ? and fl2.user_id = ?" +
+                " group by f.film_id" +
+                " order by like_count DESC";
+
+        SqlRowSet filmsRows = dataSource.queryForRowSet(sql, userId, friendId);
+        List<Film> films = new ArrayList<>();
+        while (filmsRows.next()) {
+            Film film = mapFilmRow(filmsRows);
+            films.add(film);
+            log.info("Найден фильм: {} {}", film.getId(), film.getName());
+        }
+        log.info("Конец списка фильмов");
+        return films;
+    }
+
     private Film mapFilmRow(SqlRowSet filmRows) {
         Integer filmId = filmRows.getInt("FILM_ID");
         Set<Integer> likes = getFilmLikes(filmId);
