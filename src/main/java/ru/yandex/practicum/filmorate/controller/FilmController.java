@@ -103,9 +103,10 @@ public class FilmController {
         return films.getSearch(query, by);
     }
   
-  @GetMapping("/common")
+    @GetMapping("/common")
     @Validated
     public List<Film> getCommonFavouriteFilms(@Valid @RequestParam Integer userId,
                                               @RequestParam Integer friendId) {
         return films.getCommonFavouriteFilms(userId, friendId);
+    }
 }
