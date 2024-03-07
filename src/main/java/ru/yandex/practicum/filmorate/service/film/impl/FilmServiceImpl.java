@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
-import ru.yandex.practicum.filmorate.model.FeedEventOperation;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
@@ -81,4 +79,10 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.findFilmsByDirector(directorId, sortBy);
     }
 
+    @Override
+    public List<Film> getSearch(String query, String by) {
+        log.info("Запрос поиска фильмов");
+        log.info("Вариант поиска: {}", by);
+        return filmStorage.getSearch(query, by);
+    }
 }

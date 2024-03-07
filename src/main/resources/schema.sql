@@ -104,44 +104,44 @@ CREATE TABLE IF NOT EXISTS public.review_likes
 
 ALTER TABLE IF EXISTS public.films
     ADD CONSTRAINT fk_filmsto_rating FOREIGN KEY (rating_id)
-    REFERENCES public.rating (rating_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.rating (rating_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.film_likes
     ADD CONSTRAINT fk_film_likes_to_films FOREIGN KEY (film_id)
-    REFERENCES public.films (film_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.films (film_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.film_likes
     ADD CONSTRAINT fk_film_likes_to_users FOREIGN KEY (user_id)
-    REFERENCES public.users (user_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.users (user_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.user_friends
     ADD CONSTRAINT fk_user_friends_to_user FOREIGN KEY (user_id)
-    REFERENCES public.users (user_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.users (user_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.user_friends
     ADD CONSTRAINT fk_user_friends_to_user_as_friend FOREIGN KEY (friend_id)
-    REFERENCES public.users (user_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.users (user_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.film_genres
     ADD CONSTRAINT fk_film_genres_to_films FOREIGN KEY (film_id)
-    REFERENCES public.films (film_id)
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+        REFERENCES public.films (film_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
 
 ALTER TABLE IF EXISTS public.film_genres
