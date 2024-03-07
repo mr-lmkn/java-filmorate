@@ -74,8 +74,14 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<Film> getSearch(String query, String by) {
+        log.info("Запрос поиска фильмов");
+        log.info("Вариант поиска: {}", by);
+        return filmStorage.getSearch(query, by);
+    }
+
+    @Override
     public List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId) {
         return filmStorage.getCommonFavouriteFilms(userId, friendId);
     }
-
 }

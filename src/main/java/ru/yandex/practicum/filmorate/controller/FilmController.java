@@ -97,11 +97,15 @@ public class FilmController {
         return films.getFilmsByDirector(directorId, sortBy);
     }
 
-    @GetMapping("/common")
+    @GetMapping(value = {"/search"}, produces = "application/json;")
+    public List<Film> getSearch(@RequestParam (value = "query") String query, @RequestParam (value = "by",
+            defaultValue = "director,title", required = false) String by) {
+        return films.getSearch(query, by);
+    }
+  
+  @GetMapping("/common")
     @Validated
     public List<Film> getCommonFavouriteFilms(@Valid @RequestParam Integer userId,
                                               @RequestParam Integer friendId) {
         return films.getCommonFavouriteFilms(userId, friendId);
-    }
-
 }

@@ -442,4 +442,66 @@ public class FilmDaoStorageImpl implements FilmStorage {
         return directorIds;
     }
 
+    public List<Film> getSearch(String query, String by) {
+        ArrayList<Film> films = new ArrayList<Film>();
+        if (by.equals("title")) {
+            SqlRowSet filmsRows = dataSource.queryForRowSet("WITH fl AS (SELECT FILM_ID, COUNT(DISTINCT USER_ID) AS `LIKES_CNT` " +
+                                                                "FROM FILM_LIKES " +
+                                                                "GROUP BY FILM_ID)" +
+                                                                "SELECT f.*," +
+                                                                "r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION " +
+                                                                "FROM FILMS f " +
+                                                                "JOIN RATING r ON r.RATING_ID = f.RATING_ID " +
+                                                                "LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID " +
+                                                                "WHERE UPPER(FILM_NAME) LIKE CONCAT('%',?,'%')" +
+                                                                "ORDER BY `LIKES_CNT` DESC NULLS LAST ", query.toUpperCase());
+            while (filmsRows.next()) {
+                Film film = mapFilmRow(filmsRows);
+                films.add(film);
+                log.info("Найден фильм: {} {}", film.getId(), film.getName());
+            }
+            log.info("Конец списка фильмов");
+        } else if (by.equals("director")) {
+            SqlRowSet filmsRows = dataSource.queryForRowSet("WITH fl AS (SELECT FILM_ID, COUNT(DISTINCT USER_ID) AS `LIKES_CNT` " +
+                                                            "FROM FILM_LIKES " +
+                                                            "GROUP BY FILM_ID)" +
+                                                            "SELECT f.*," +
+                                                            "r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION, GROUP_CONCAT(d.director_id) AS DIRECTORS_IDS, GROUP_CONCAT(d.director_name) AS DIRECTORS_NAMES " +
+                                                            "FROM FILMS f " +
+                                                            "JOIN RATING r ON r.RATING_ID = f.RATING_ID " +
+                                                            "LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID " +
+                                                            "LEFT JOIN film_director AS fd ON fd.FILM_ID = f.FILM_ID " +
+                                                            "LEFT JOIN director AS d ON fd.DIRECTOR_ID = d.DIRECTOR_ID " +
+                                                            "GROUP BY f.film_id " +
+                                                            "HAVING UPPER(DIRECTORS_NAMES) LIKE CONCAT('%',?,'%')" +
+                                                            "ORDER BY `LIKES_CNT` DESC NULLS LAST ", query.toUpperCase());
+            while (filmsRows.next()) {
+                Film film = mapFilmRow(filmsRows);
+                films.add(film);
+                log.info("Найден фильм: {} {}", film.getId(), film.getName());
+            }
+            log.info("Конец списка фильмов");
+        } else if (by.equals("director,title") || by.equals("title,director")) {
+            SqlRowSet filmsRows = dataSource.queryForRowSet("WITH fl AS (SELECT FILM_ID, COUNT(DISTINCT USER_ID) AS `LIKES_CNT` " +
+                                                            "FROM FILM_LIKES " +
+                                                            "GROUP BY FILM_ID)" +
+                                                            "SELECT f.*," +
+                                                            "r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION, GROUP_CONCAT(d.director_id) AS DIRECTORS_IDS, GROUP_CONCAT(d.director_name) AS DIRECTORS_NAMES " +
+                                                            "FROM FILMS f " +
+                                                            "JOIN RATING r ON r.RATING_ID = f.RATING_ID " +
+                                                            "LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID " +
+                                                            "LEFT JOIN film_director AS fd ON fd.FILM_ID = f.FILM_ID " +
+                                                            "LEFT JOIN director AS d ON fd.DIRECTOR_ID = d.DIRECTOR_ID " +
+                                                            "GROUP BY f.film_id " +
+                                                            "HAVING UPPER(FILM_NAME) LIKE CONCAT('%',?,'%') OR UPPER(DIRECTORS_NAMES) LIKE CONCAT('%',?,'%') " +
+                                                            "ORDER BY `LIKES_CNT` DESC NULLS LAST ", query.toUpperCase(), query.toUpperCase());
+            while (filmsRows.next()) {
+                Film film = mapFilmRow(filmsRows);
+                films.add(film);
+                log.info("Найден фильм: {} {}", film.getId(), film.getName());
+            }
+            log.info("Конец списка фильмов");
+        }
+        return films;
+    }
 }
