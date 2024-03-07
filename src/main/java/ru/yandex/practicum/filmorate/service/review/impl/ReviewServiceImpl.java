@@ -26,7 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
         feed.saveEvent(createdReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedEventOperation.ADD,
-                createdReview.getFilmId());
+                createdReview.getReviewId());
         return createdReview;
     }
 
@@ -41,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
         feed.saveEvent(updReview.getUserId(),
                 FeedEventType.REVIEW,
                 FeedEventOperation.UPDATE,
-                updReview.getFilmId());
+                updReview.getReviewId());
         return updReview;
     }
 
@@ -62,20 +62,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review addFeedback(Integer reviewId, String feedback, Integer userId) throws NoDataFoundException {
-        feed.saveEvent(userId,
-                FeedEventType.LIKE,
-                FeedEventOperation.ADD,
-                reviewId);
         reviewStorage.addFeedback(reviewId, feedbackToBoolean(feedback), userId);
         return getReviewById(reviewId);
     }
 
     @Override
     public Review removeFeedback(Integer reviewId, String feedback, Integer userId) throws NoDataFoundException {
-        feed.saveEvent(userId,
-                FeedEventType.LIKE,
-                FeedEventOperation.REMOVE,
-                reviewId);
         reviewStorage.removeFeedback(reviewId, feedbackToBoolean(feedback), userId);
         return getReviewById(reviewId);
     }
