@@ -73,4 +73,9 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.findFilmsByDirector(directorId, sortBy);
     }
 
+    @Override
+    public List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFavouriteFilms(userId, friendId);
+    }
+
 }

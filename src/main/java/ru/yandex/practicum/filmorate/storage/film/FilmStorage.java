@@ -24,4 +24,6 @@ public interface FilmStorage {
     List<Film> getPopular(Integer limit) throws NoDataFoundException;
 
     List<Film> findFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException;
+
+    List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId);
 }
