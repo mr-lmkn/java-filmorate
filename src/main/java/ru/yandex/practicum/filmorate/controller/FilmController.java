@@ -71,7 +71,6 @@ public class FilmController {
             throws WrongFilmDataException, NoDataFoundException {
         log.info("Got delete like of user {} from film {} request", userId, filmId);
         films.deleteLike(filmId, userId);
-        //return ResponseEntity.noContent().build();
         return ResponseEntity.ok().build();
     }
 
