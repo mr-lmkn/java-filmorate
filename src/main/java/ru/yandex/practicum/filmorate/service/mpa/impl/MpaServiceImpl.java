@@ -27,4 +27,5 @@ public class MpaServiceImpl implements MpaService {
         log.info("Зарос всех рейтинов");
         return mpaStorage.getAllMpa();
     }
+
 }

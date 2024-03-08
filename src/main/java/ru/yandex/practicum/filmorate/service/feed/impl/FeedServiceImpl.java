@@ -40,4 +40,5 @@ public class FeedServiceImpl implements FeedService {
                 .build();
         feedStorage.saveEvent(event);
     }
+
 }

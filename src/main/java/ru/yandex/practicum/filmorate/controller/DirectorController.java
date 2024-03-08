@@ -37,33 +37,18 @@ public class DirectorController {
 
     @PostMapping
     public Director create(@Valid @RequestBody Director director) {
-//        if (director != null) {
-            return directorService.create(director);
-//        } else {
-//            log.debug("Ошибка валидации пользователя: пришел null");
-//            throw new ValidationException();
-//        }
+        return directorService.create(director);
     }
 
     @PutMapping
     public Director update(@Valid @RequestBody Director director) throws NoDataFoundException {
-//        if (director != null) {
-            directorService.update(director);
-            return director;
-//        } else {
-//            log.debug("Ошибка валидации режиссера: пришел null");
-//            throw new ValidationException();
-//        }
+        directorService.update(director);
+        return director;
     }
 
     @DeleteMapping("/{id}")
     @Validated
     public void deleteDirector(@PathVariable @NotNull Integer id) throws NoDataFoundException {
-//        if (id != null) {
-            directorService.deleteDirectorById(id);
-//        } else {
-//            log.debug("Ошибка валидации режиссера: пришел null");
-//            throw new ValidationException();
-//        }
+        directorService.deleteDirectorById(id);
     }
 }

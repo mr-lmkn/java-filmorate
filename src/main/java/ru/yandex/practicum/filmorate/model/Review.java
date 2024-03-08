@@ -1,14 +1,13 @@
 package ru.yandex.practicum.filmorate.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Builder
@@ -40,4 +39,5 @@ public class Review {
         values.put("film_id", filmId);
         return values;
     }
+
 }

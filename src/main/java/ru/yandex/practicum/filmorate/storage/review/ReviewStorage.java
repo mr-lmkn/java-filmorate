@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
-import java.util.List;
-
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+
+import java.util.List;
 
 public interface ReviewStorage {
     List<Review> getAllReviews();

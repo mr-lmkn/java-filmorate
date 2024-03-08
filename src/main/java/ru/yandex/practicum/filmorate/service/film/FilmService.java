@@ -22,9 +22,14 @@ public interface FilmService {
     Film deleteLike(Integer filmId, Integer userId) throws NoDataFoundException; // пользователь удаляет лайк.
 
     //— возвращает список из первых count фильмов по количеству лайков. Если значение параметра count не задано, верните первые 10.
-    List<Film> getPopular(Integer limit) throws NoDataFoundException;
+    List<Film> getPopular(Integer limit, String genreId, Integer year) throws NoDataFoundException;
 
     List<Film> getFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException;
 
     List<Film> getSearch(String query, String by);
+
+    List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId);
+
+    List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
+
 }

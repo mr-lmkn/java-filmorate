@@ -27,14 +27,14 @@ public class DirectorDaoStorageImpl implements DirectorStorage {
     @Override
     public List<Director> findAll() {
         String sql = "select * from director";
-        return jdbcTemplate.query(sql,(rs, rowNum) -> makeDirector(rs));
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirector(rs));
     }
 
     @Override
     public Director find(Integer id) throws NoDataFoundException {
         String sql = "select * from director where director_id = ?";
         try {
-            Director director = jdbcTemplate.queryForObject(sql,(rs, rowNum) -> makeDirector(rs), id);
+            Director director = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeDirector(rs), id);
             log.debug("Режиссер {} найден", director);
             return director;
         } catch (DataAccessException e) {
@@ -84,4 +84,5 @@ public class DirectorDaoStorageImpl implements DirectorStorage {
                 .id(id)
                 .build();
     }
+
 }

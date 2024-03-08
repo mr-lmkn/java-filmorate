@@ -27,5 +27,6 @@ public class GenreServiceImpl implements GenreService {
         log.info("Зарос всех рейтинов");
         return genreStorage.getAllGenre();
     }
+
 }
 

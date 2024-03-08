@@ -20,7 +20,7 @@ import java.util.Set;
 public class Film {
 
     // целочисленный идентификатор
-    @Min(value = 1L, message = "id должен быть > 1")
+    @Min(value = 1, message = "id должен быть > 1")
     @Nullable
     private Integer id;
 

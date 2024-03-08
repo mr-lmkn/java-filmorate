@@ -29,7 +29,6 @@ public class FilmDirectorsDaoStorageImpl implements FilmDirectorsStorage {
                             .addValue("film_id", filmId)
                             .addValue("director_id", directorId)).toArray(MapSqlParameterSource[]::new));
         }
-
     }
 
     @Override
@@ -42,4 +41,5 @@ public class FilmDirectorsDaoStorageImpl implements FilmDirectorsStorage {
         String sql = "delete from film_director where film_id = ?";
         jdbcTemplate.update(sql, filmId);
     }
+
 }

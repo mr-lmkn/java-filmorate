@@ -71,11 +71,13 @@ public class FilmController {
             throws WrongFilmDataException, NoDataFoundException {
         log.info("Got delete like of user {} from film {} request", userId, filmId);
         films.deleteLike(filmId, userId);
-        return ResponseEntity.noContent().build();
+        //return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = {"/popular"}, produces = "application/json;")
-    public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count)
+    public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count, @RequestParam(value = "genreId",
+            required = false) String genreId, @RequestParam(value = "year", required = false) Integer year)
             throws NoDataFoundException {
         Integer limit;
         if (count.isPresent()) {
@@ -84,7 +86,7 @@ public class FilmController {
             limit = popularFilmsLimitDefaultValue;
         }
         log.info("Got popular films list request. Limit is set to: {}", limit);
-        return films.getPopular(limit);
+        return films.getPopular(limit, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")
@@ -102,4 +104,10 @@ public class FilmController {
         return films.getSearch(query, by);
     }
 
+    @GetMapping("/common")
+    @Validated
+    public List<Film> getCommonFavouriteFilms(@Valid @RequestParam Integer userId,
+                                              @RequestParam Integer friendId) {
+        return films.getCommonFavouriteFilms(userId, friendId);
+    }
 }
