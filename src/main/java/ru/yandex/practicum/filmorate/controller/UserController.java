@@ -99,7 +99,7 @@ public class UserController {
     public List<Film> getRecommendations(@PathVariable int id) throws NoDataFoundException {
         return users.getRecommendations(id);
     }
-  
+
     @GetMapping("/{id}/feed") // удаление из друзей
     public List<FeedEvent> getFeed(@PathVariable int id) throws NoDataFoundException {
         log.info("Got user {} feed request", id);
