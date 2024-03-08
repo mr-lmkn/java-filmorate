@@ -14,7 +14,7 @@ public interface ReviewService {
 
     Review updateReview(Review review) throws NoDataFoundException;
 
-    void deleteReview(Integer reviewId);
+    void deleteReview(Integer reviewId) throws NoDataFoundException;
 
     List<Review> getReviews(Integer filmId, Integer count);
 

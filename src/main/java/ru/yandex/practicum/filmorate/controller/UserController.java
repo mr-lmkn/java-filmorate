@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import javax.validation.Valid;
@@ -19,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
 
-    private UserService users;
+    private final UserService users;
+    private final FeedService feed;
 
     @GetMapping()
     public List<User> getAll() {
@@ -95,6 +98,11 @@ public class UserController {
     @GetMapping("/{id}/recommendations") //рекомендации
     public List<Film> getRecommendations(@PathVariable int id) throws NoDataFoundException {
         return users.getRecommendations(id);
+  
+    @GetMapping("/{id}/feed") // удаление из друзей
+    public List<FeedEvent> getFeed(@PathVariable int id) throws NoDataFoundException {
+        log.info("Got user {} feed request", id);
+        return feed.getEventsByUserId(id);
     }
 
 }

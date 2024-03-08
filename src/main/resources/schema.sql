@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public.events
     event_type VARCHAR(50) NOT NULL,
     event_operation VARCHAR(50) NOT NULL,
     entity_id INTEGER NOT NULL,
-    timestamp INTEGER NOT NULL
+    timestamp BIGINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS public.director
@@ -154,7 +154,7 @@ ALTER TABLE IF EXISTS public.events
     ADD CONSTRAINT fk_events_user_id FOREIGN KEY (user_id)
     REFERENCES public.users (user_id)
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
+    ON DELETE CASCADE;
 
 ALTER TABLE IF EXISTS public.film_director
     ADD CONSTRAINT fk_film_director_film_id FOREIGN KEY (film_id)
