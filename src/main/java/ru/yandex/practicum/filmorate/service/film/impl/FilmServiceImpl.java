@@ -70,10 +70,19 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getPopular(Integer limit) throws NoDataFoundException {
+    public List<Film> getPopular(Integer limit, String genreId, Integer year) throws NoDataFoundException {
         log.info("Запрос популярных фильмов");
         log.info("Задано ограничение вывода: {}", limit);
-        return filmStorage.getPopular(limit);
+        if (genreId != null & year != null) {
+            log.info("Фильтарция популярных фильмов по году и жанру");
+        }
+        if (genreId == null & year != null) {
+            log.info("Фильтарция популярных фильмов по году");
+        }
+        if (genreId != null & year == null) {
+            log.info("Фильтарция популярных фильмов по жанру");
+        }
+        return filmStorage.getPopular(limit, genreId, year);
     }
 
     @Override

@@ -76,7 +76,8 @@ public class FilmController {
     }
 
     @GetMapping(value = {"/popular"}, produces = "application/json;")
-    public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count)
+    public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count, @RequestParam (value = "genreId",
+            required = false) String genreId, @RequestParam (value = "year", required = false) Integer year)
             throws NoDataFoundException {
         Integer limit;
         if (count.isPresent()) {
@@ -85,7 +86,7 @@ public class FilmController {
             limit = popularFilmsLimitDefaultValue;
         }
         log.info("Got popular films list request. Limit is set to: {}", limit);
-        return films.getPopular(limit);
+        return films.getPopular(limit, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")

@@ -230,39 +230,75 @@ public class FilmDaoStorageImpl implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopular(Integer limit) throws NoDataFoundException {
-        ArrayList<Film> films = new ArrayList<Film>();
-        SqlRowSet filmsRows = dataSource.queryForRowSet(
-                " WITH fl AS ( "
-                        + " SELECT FILM_ID, COUNT(DISTINCT USER_ID) AS `LIKES_CNT`"
-                        + " FROM FILM_LIKES "
-                        + " GROUP BY FILM_ID "
-                        + ")"
-                        + " SELECT f.* "
-                        + " , r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION "
-                        + ", GROUP_CONCAT(d.DIRECTOR_ID) as directors_ids"
-                        + ", GROUP_CONCAT(d.DIRECTOR_NAME) as directors_names"
-                        + " FROM FILMS f "
-                        + " JOIN RATING r ON r.RATING_ID = f.RATING_ID "
-                        + " LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID "
-                        + " LEFT JOIN FILM_DIRECTOR AS fd ON fd.FILM_ID = f.FILM_ID"
-                        + " LEFT JOIN DIRECTOR AS d on d.DIRECTOR_ID = fd.DIRECTOR_ID"
-                        + " GROUP BY f.FILM_ID "
-                        + " ORDER BY `LIKES_CNT` DESC NULLS LAST"
-                        + " LIMIT ?;",
-                limit
-        );
-
-        if (filmsRows.wasNull()) {
-            throw new NoDataFoundException("Список фильмов пустой");
+    public List<Film> getPopular(Integer limit, String genreId, Integer year) throws NoDataFoundException {
+        List<Film> films = new ArrayList<>();
+        String sqlFirstPart = "WITH fl AS (SELECT FILM_ID, COUNT(DISTINCT USER_ID) AS `LIKES_CNT`"
+                            + " FROM FILM_LIKES "
+                            + " GROUP BY FILM_ID)"
+                            + " SELECT f.*, "
+                            + " r.RATING_CODE, r.RATING_NAME, r.RATING_DESCRIPTION,"
+                            + " GROUP_CONCAT(d.DIRECTOR_ID) as directors_ids,"
+                            + " GROUP_CONCAT(d.DIRECTOR_NAME) as directors_names,"
+                            + " GROUP_CONCAT(fg.genre_id) as genre_ids"
+                            + " FROM FILMS f "
+                            + " JOIN RATING r ON r.RATING_ID = f.RATING_ID "
+                            + " LEFT JOIN fl ON fl.FILM_ID = f.FILM_ID "
+                            + " LEFT JOIN FILM_DIRECTOR AS fd ON fd.FILM_ID = f.FILM_ID"
+                            + " LEFT JOIN DIRECTOR AS d on d.DIRECTOR_ID = fd.DIRECTOR_ID"
+                            + " LEFT JOIN FILM_GENRES AS fg on f.FILM_ID = fg.FILM_ID"
+                            + " GROUP BY f.FILM_ID";
+        String sqlEndPart = " ORDER BY `LIKES_CNT` DESC NULLS LAST"
+                          + " LIMIT ?;";
+        String sqlYearSortPart = " HAVING EXTRACT(YEAR FROM cast(f.RELEASE_DATE as date)) = ?";
+        String sqlGenreSortPart = " HAVING genre_ids LIKE CONCAT('%',?,'%')";
+        String sqlGenreAndYearSortPart = " HAVING EXTRACT(YEAR FROM cast(f.RELEASE_DATE as date)) = ? AND genre_ids LIKE CONCAT('%',?,'%')";
+        StringBuilder sqlSb = new StringBuilder();
+        String sql;
+        SqlRowSet filmsRows = null;
+        if (genreId == null & year == null) {
+            sql = sqlSb
+                    .append(sqlFirstPart)
+                    .append(sqlEndPart)
+                    .toString();
+            filmsRows = dataSource.queryForRowSet(sql, limit);
         }
 
-        while (filmsRows.next()) {
-            Film film = mapFilmRow(filmsRows);
-            films.add(film);
-            log.info("Найден фильм: {} {}", film.getId(), film.getName());
+        if (genreId == null & year != null) {
+            sql = sqlSb
+                    .append(sqlFirstPart)
+                    .append(sqlYearSortPart)
+                    .append(sqlEndPart)
+                    .toString();
+            filmsRows = dataSource.queryForRowSet(sql, year, limit);
         }
-        log.info("Конец списка популярных фильмов");
+
+        if (genreId != null & year == null) {
+            sql = sqlSb
+                    .append(sqlFirstPart)
+                    .append(sqlGenreSortPart)
+                    .append(sqlEndPart)
+                    .toString();
+            filmsRows = dataSource.queryForRowSet(sql, genreId, limit);
+        }
+
+        if (genreId != null & year != null) {
+            sql = sqlSb
+                    .append(sqlFirstPart)
+                    .append(sqlGenreAndYearSortPart)
+                    .append(sqlEndPart)
+                    .toString();
+            filmsRows = dataSource.queryForRowSet(sql, year, genreId, limit);
+        }
+
+        if (filmsRows.next()) {
+            do {
+                Film film = mapFilmRow(filmsRows);
+                films.add(film);
+                log.info("Найден фильм: {} {}", film.getId(), film.getName());
+            } while (filmsRows.next());
+            log.info("Конец списка фильмов");
+            return films;
+        }
         return films;
     }
 
