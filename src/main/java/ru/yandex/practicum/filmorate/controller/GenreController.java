@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GenreController {
 
-    private GenreService genreService;
+    private final GenreService genreService;
 
     @GetMapping()
     public List<Genre> getAll() {

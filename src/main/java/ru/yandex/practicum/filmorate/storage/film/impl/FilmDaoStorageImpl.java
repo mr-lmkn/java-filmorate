@@ -25,7 +25,7 @@ import java.util.*;
 @Slf4j
 public class FilmDaoStorageImpl implements FilmStorage {
     private final JdbcTemplate dataSource;
-    private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
     private final FilmDirectorsStorage filmDirectorsStorage;
 
     @Override
@@ -146,7 +146,6 @@ public class FilmDaoStorageImpl implements FilmStorage {
                 log.info(msg);
                 throw new NoDataFoundException(msg);
             }
-
         }
 
         String msg = String.format("Не указан 'id' %s. Обновление не возможно.", id);

@@ -1,24 +1,33 @@
 package ru.yandex.practicum.filmorate.service.review.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
+import ru.yandex.practicum.filmorate.model.FeedEventOperation;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FeedService feed;
 
     @Override
     public Review createReview(Review review) throws NoDataFoundException {
-        Review interimReview = reviewStorage.createReview(review);
-        return interimReview;
+        Review createdReview = reviewStorage.createReview(review);
+        feed.saveEvent(createdReview.getUserId(),
+                FeedEventType.REVIEW,
+                FeedEventOperation.ADD,
+                createdReview.getReviewId());
+        return createdReview;
     }
 
     @Override
@@ -28,11 +37,21 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review updateReview(Review review) throws NoDataFoundException {
-        return reviewStorage.updateReview(review);
+        Review updReview = reviewStorage.updateReview(review);
+        feed.saveEvent(updReview.getUserId(),
+                FeedEventType.REVIEW,
+                FeedEventOperation.UPDATE,
+                updReview.getReviewId());
+        return updReview;
     }
 
     @Override
-    public void deleteReview(Integer reviewId) {
+    public void deleteReview(Integer reviewId) throws NoDataFoundException {
+        Review dltReview = getReviewById(reviewId);
+        feed.saveEvent(dltReview.getUserId(),
+                FeedEventType.REVIEW,
+                FeedEventOperation.REMOVE,
+                dltReview.getFilmId());
         reviewStorage.deleteReview(reviewId);
     }
 

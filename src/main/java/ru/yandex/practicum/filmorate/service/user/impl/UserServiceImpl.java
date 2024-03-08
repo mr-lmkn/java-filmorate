@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.FeedEventOperation;
+import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -18,7 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserStorage users;
+    private final UserStorage users;
+    private final FeedService feed;
 
     @Override
     public List<User> getAllUsers() {
@@ -54,18 +58,24 @@ public class UserServiceImpl implements UserService {
         log.info("Зарос удаления друзей");
         users.addFriend(userId, friendId, true);
         users.addFriend(friendId, userId, false);
-        return users.getUserById(userId);
+        User outUser = users.getUserById(userId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.ADD, friendId);
+        return outUser;
     }
 
     public User confirmFriend(Integer userId, Integer friendId) throws NoDataFoundException {
         log.info("Зарос подтверждения дружбы");
         users.confirmFriend(userId, friendId);
-        return users.getUserById(userId);
+        User outUser = users.getUserById(userId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.UPDATE, friendId);
+        return outUser;
     }
 
     public User deteteFriend(Integer userId, Integer friendId) throws NoDataFoundException {
         log.info("Зарос удаления дружбы");
-        return users.deteteFriend(userId, friendId);
+        User outUser = users.deteteFriend(userId, friendId);
+        feed.saveEvent(userId, FeedEventType.FRIEND, FeedEventOperation.REMOVE, friendId);
+        return outUser;
     }
 
     public ArrayList<User> getAllUserFriends(Integer userId) throws NoDataFoundException {

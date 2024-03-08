@@ -41,7 +41,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteReview(@PathVariable Integer id) {
+    public void deleteReview(@PathVariable Integer id) throws NoDataFoundException {
         log.info("Request to delete review id = {}", id);
         reviewService.deleteReview(id);
     }
