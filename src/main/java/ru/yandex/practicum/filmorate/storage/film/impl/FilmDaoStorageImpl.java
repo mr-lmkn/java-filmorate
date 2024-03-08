@@ -503,4 +503,37 @@ public class FilmDaoStorageImpl implements FilmStorage {
         }
         return films;
     }
+
+    @Override
+    public List<Film> getRecommendations(int userId) throws NoDataFoundException {
+        ArrayList<Film> films = new ArrayList<Film>();
+
+        SqlRowSet rs = dataSource.queryForRowSet(
+                "SELECT * FROM FILMS" +
+                        "    JOIN RATING ON FILMS.RATING_ID = RATING.RATING_ID" +
+                        "         WHERE FILMS.FILM_ID IN (" +
+                        "             SELECT FILM_ID FROM FILM_LIKES" +
+                        "                            WHERE USER_ID IN (" +
+                        "                                SELECT FL1.USER_ID FROM FILM_LIKES AS FL1" +
+                        "                                    RIGHT JOIN FILM_LIKES FL2 ON FL2.FILM_ID = FL1.FILM_ID" +
+                        "                                                   GROUP BY FL1.USER_ID, FL2.USER_ID" +
+                        "                                                   HAVING FL1.USER_ID IS NOT NULL AND" +
+                        "                                                   FL1.USER_ID != ? AND FL2.USER_ID = ?" +
+                        "                                                   ORDER BY COUNT(FL1.USER_ID) DESC" +
+                        "                                                   LIMIT 1" +
+                        "                                )" +
+                        "                              AND FILM_ID NOT IN (" +
+                        "                                  SELECT FILM_ID FROM FILM_LIKES WHERE USER_ID = ?" +
+                        "                                  )" +
+                        "             )",
+                userId,userId,userId
+        );
+        while (rs.next()) {
+            Film film = mapFilmRow(rs);
+            films.add(film);
+        }
+        log.info("Конец списка фильмов с рекомендациями...");
+        return films;
+
+    }
 }

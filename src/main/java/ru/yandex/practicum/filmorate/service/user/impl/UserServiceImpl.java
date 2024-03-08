@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FeedEventOperation;
 import ru.yandex.practicum.filmorate.model.FeedEventType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.ArrayList;
@@ -21,7 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage users;
+    private UserStorage users;
+    private FilmStorage films;
     private final FeedService feed;
 
     @Override
@@ -110,6 +113,12 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer userId) throws NoDataFoundException {
         log.info("Зарос удаления дружбы");
         users.deteteUser(userId);
+    }
+
+    @Override
+    public List<Film> getRecommendations(Integer userId) throws NoDataFoundException {
+        getUserById(userId);
+        return films.getRecommendations(userId);
     }
 
 }
