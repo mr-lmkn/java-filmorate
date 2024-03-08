@@ -18,8 +18,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film_directors.FilmDirectorsStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 @Repository
