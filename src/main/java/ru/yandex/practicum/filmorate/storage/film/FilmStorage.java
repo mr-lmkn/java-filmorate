@@ -29,5 +29,5 @@ public interface FilmStorage {
 
     List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId);
 
-    List<Film> getRecommendations(int userId) throws NoDataFoundException;
+    List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
 }
