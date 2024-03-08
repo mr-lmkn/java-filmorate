@@ -31,5 +31,5 @@ public interface UserService {
 
     void deleteUser(Integer userId) throws NoDataFoundException;
 
-    List<Film> getRecommendations(int userId) throws NoDataFoundException;
+    List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
 }
