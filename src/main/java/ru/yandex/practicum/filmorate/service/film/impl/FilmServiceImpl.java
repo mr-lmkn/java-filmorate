@@ -1,7 +1,8 @@
 package ru.yandex.practicum.filmorate.service.film.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongFilmDataException;
@@ -14,14 +15,18 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmStorage;
     private final FeedService feed;
+
+    @Value("${ru.yandex.practicum.filmorate.service.FilmServiceImpl.popularFilmsLimitDefaultValue}")
+    private Integer popularFilmsLimitDefaultValue;
 
     @Override
     public List<Film> getAllFilms() {
@@ -70,7 +75,14 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getPopular(Integer limit, String genreId, Integer year) throws NoDataFoundException {
+    public List<Film> getPopular(Optional<Integer> count, String genreId, Integer year) throws NoDataFoundException {
+        Integer limit;
+        if (count.isPresent()) {
+            limit = count.get();
+        } else {
+            limit = popularFilmsLimitDefaultValue;
+        }
+
         log.info("Запрос популярных фильмов");
         log.info("Задано ограничение вывода: {}", limit);
         if (genreId != null & year != null) {
@@ -100,10 +112,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId) {
         return filmStorage.getCommonFavouriteFilms(userId, friendId);
-    }
-
-    public List<Film> getRecommendations(Integer userId) throws NoDataFoundException {
-        return filmStorage.getRecommendations(userId);
     }
 
 }
