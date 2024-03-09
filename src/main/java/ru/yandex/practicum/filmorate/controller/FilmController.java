@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
@@ -20,9 +18,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmController {
-    @Value("${ru.yandex.practicum.filmorate.controller.popularFilmsLimitDefaultValue}")
-    private Integer popularFilmsLimitDefaultValue;
-
     private final FilmService films;
 
     @GetMapping(produces = "application/json;")
@@ -52,11 +47,10 @@ public class FilmController {
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json;")
-    public ResponseEntity<String> delete(@Valid @PathVariable Integer id)
+    public void delete(@Valid @PathVariable Integer id)
             throws WrongFilmDataException {
         log.info("Got delete film {} request", id);
         films.delete(id);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "/{filmId}/like/{userId}", produces = "application/json;")
@@ -67,26 +61,18 @@ public class FilmController {
     }
 
     @DeleteMapping(value = "/{filmId}/like/{userId}", produces = "application/json;")
-    public ResponseEntity<String> delete(@Valid @PathVariable Integer filmId, @Valid @PathVariable Integer userId)
+    public void delete(@Valid @PathVariable Integer filmId, @Valid @PathVariable Integer userId)
             throws WrongFilmDataException, NoDataFoundException {
         log.info("Got delete like of user {} from film {} request", userId, filmId);
         films.deleteLike(filmId, userId);
-        //return ResponseEntity.noContent().build();
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = {"/popular"}, produces = "application/json;")
     public List<Film> getPopular(@Valid @RequestParam Optional<Integer> count, @RequestParam (value = "genreId",
             required = false) String genreId, @RequestParam (value = "year", required = false) Integer year)
             throws NoDataFoundException {
-        Integer limit;
-        if (count.isPresent()) {
-            limit = count.get();
-        } else {
-            limit = popularFilmsLimitDefaultValue;
-        }
-        log.info("Got popular films list request. Limit is set to: {}", limit);
-        return films.getPopular(limit, genreId, year);
+        log.info("Got popular films list request.");
+        return films.getPopular(count, genreId, year);
     }
 
     @GetMapping("/director/{directorId}")
@@ -94,13 +80,14 @@ public class FilmController {
     public List<Film> getFilmsByDirector(@PathVariable Integer directorId,
                                          @RequestParam(defaultValue = "year") String sortBy)
             throws NoDataFoundException {
-
+        log.info("Got Films By Director request.");
         return films.getFilmsByDirector(directorId, sortBy);
     }
 
     @GetMapping(value = {"/search"}, produces = "application/json;")
     public List<Film> getSearch(@RequestParam(value = "query") String query, @RequestParam(value = "by",
             defaultValue = "director,title", required = false) String by) {
+        log.info("Got search request.");
         return films.getSearch(query, by);
     }
 
@@ -108,6 +95,8 @@ public class FilmController {
     @Validated
     public List<Film> getCommonFavouriteFilms(@Valid @RequestParam Integer userId,
                                               @RequestParam Integer friendId) {
+        log.info("Got CommonFavouriteFilms request.");
         return films.getCommonFavouriteFilms(userId, friendId);
     }
+
 }

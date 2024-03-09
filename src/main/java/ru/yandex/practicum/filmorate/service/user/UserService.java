@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service.user;
 
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -32,4 +33,6 @@ public interface UserService {
     void deleteUser(Integer userId) throws NoDataFoundException;
 
     List<Film> getRecommendations(Integer userId) throws NoDataFoundException;
+
+    List<FeedEvent> getFeed(Integer id) throws NoDataFoundException;
 }
