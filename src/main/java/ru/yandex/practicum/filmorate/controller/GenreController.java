@@ -18,7 +18,6 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class GenreController {
-
     private final GenreService genreService;
 
     @GetMapping()

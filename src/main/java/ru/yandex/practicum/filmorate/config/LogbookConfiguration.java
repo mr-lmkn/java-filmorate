@@ -7,4 +7,5 @@ import org.zalando.logbook.Logbook;
 @Configurable
 public class LogbookConfiguration {
     Logbook logbook = Logbook.builder().build();
+
 }

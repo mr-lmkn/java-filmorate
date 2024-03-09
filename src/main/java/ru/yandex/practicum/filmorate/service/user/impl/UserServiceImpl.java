@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FeedEventOperation;
-import ru.yandex.practicum.filmorate.model.FeedEventType;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.feed.FeedService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -23,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserStorage users;
-    private FilmStorage films;
+    private final UserStorage users;
+    private final FilmStorage films;
     private final FeedService feed;
 
     @Override
@@ -119,6 +116,11 @@ public class UserServiceImpl implements UserService {
     public List<Film> getRecommendations(Integer userId) throws NoDataFoundException {
         getUserById(userId);
         return films.getRecommendations(userId);
+    }
+
+    @Override
+    public List<FeedEvent> getFeed(Integer id) throws NoDataFoundException {
+        return feed.getEventsByUserId(id);
     }
 
 }
