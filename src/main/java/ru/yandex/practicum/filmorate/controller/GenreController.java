@@ -18,8 +18,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class GenreController {
-
-    private GenreService genreService;
+    private final GenreService genreService;
 
     @GetMapping()
     public List<Genre> getAll() {

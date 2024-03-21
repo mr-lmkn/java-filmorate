@@ -165,7 +165,7 @@ class UserControllerTest {
                 .delete().uri("/users/1")
                 .exchange()
                 .expectStatus()
-                .isEqualTo(204);
+                .isEqualTo(200);
     }
 
     @Test

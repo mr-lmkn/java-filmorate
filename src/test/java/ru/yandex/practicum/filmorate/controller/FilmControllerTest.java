@@ -193,7 +193,7 @@ class FilmControllerTest {
                 .delete().uri("/films/1")
                 .exchange()
                 .expectStatus()
-                .isEqualTo(204);
+                .isEqualTo(200);
     }
 
 }

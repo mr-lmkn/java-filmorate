@@ -17,4 +17,6 @@ public interface GenreStorage {
     Set<Genre> linkGenresToFilmId(Integer filmId, Set<Genre> setGenre) throws NoDataFoundException;
 
     Genre addGenreToFilmId(Integer filmId, Genre genre) throws NoDataFoundException;
+
+    void deleteAllFilmGeneres(Integer filmId);
 }

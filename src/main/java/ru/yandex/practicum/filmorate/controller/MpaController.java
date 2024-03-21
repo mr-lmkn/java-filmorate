@@ -18,8 +18,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class MpaController {
-
-    private MpaService mpaService;
+    private final MpaService mpaService;
 
     @GetMapping()
     public List<Mpa> getAll() {

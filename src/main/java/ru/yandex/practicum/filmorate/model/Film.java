@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.validation.MinReleaseDateConstraint;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +33,6 @@ public class Film {
     private String description;
 
     //дата релиза
-    @Past
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @MinReleaseDateConstraint
     private LocalDate releaseDate;
@@ -51,6 +49,9 @@ public class Film {
 
     @Nullable
     private Set<Integer> likes;
+
+    @Nullable
+    private Set<Director> directors;
 
 
     public Set<Genre> getGenres() {
@@ -71,6 +72,16 @@ public class Film {
             outLikes = new HashSet<>();
         }
         return outLikes;
+    }
+
+    public Set<Director> getDirectors() {
+        Set<Director> outDirectors;
+        if (directors != null) {
+            outDirectors = directors;
+        } else {
+            outDirectors = new HashSet<>();
+        }
+        return outDirectors;
     }
 
 

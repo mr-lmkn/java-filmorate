@@ -21,6 +21,13 @@ public interface FilmStorage {
 
     Film deleteLike(Integer filmId, Integer userId) throws NoDataFoundException;
 
-    List<Film> getPopular(Integer limit) throws NoDataFoundException;
+    List<Film> getPopular(Integer limit, String genreId, Integer year) throws NoDataFoundException;
 
+    List<Film> findFilmsByDirector(Integer directorId, String sortBy) throws NoDataFoundException;
+
+    List<Film> getSearch(String query, String by);
+
+    List<Film> getCommonFavouriteFilms(Integer userId, Integer friendId);
+
+    List<Film> getRecommendations(int userId) throws NoDataFoundException;
 }

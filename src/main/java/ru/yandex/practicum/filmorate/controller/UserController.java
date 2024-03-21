@@ -2,10 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoDataFoundException;
 import ru.yandex.practicum.filmorate.exception.WrongUserDataException;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FeedEvent;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
@@ -17,8 +18,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class UserController {
-
-    private UserService users;
+    private final UserService users;
 
     @GetMapping()
     public List<User> getAll() {
@@ -47,11 +47,10 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json;")
-    public ResponseEntity<String> delete(@Valid @PathVariable Integer id)
+    public void delete(@Valid @PathVariable Integer id)
             throws WrongUserDataException {
         log.info("Got delete user {} request", id);
         users.delete(id);
-        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/friends/{friendId}") // добавление в друзья
@@ -83,6 +82,23 @@ public class UserController {
             throws NoDataFoundException {
         log.info("Got all user {} friends request", id);
         return users.getIntersectFriends(id, comparedUserId);
+    }
+
+    @DeleteMapping("/{id}") // удаление из друзей
+    public void deleteUser(@PathVariable int id) throws NoDataFoundException {
+        log.info("Got delete user {} request", id);
+        users.deleteUser(id);
+    }
+
+    @GetMapping("/{id}/recommendations") //рекомендации
+    public List<Film> getRecommendations(@PathVariable int id) throws NoDataFoundException {
+        return users.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed") // История событий
+    public List<FeedEvent> getFeed(@PathVariable int id) throws NoDataFoundException {
+        log.info("Got user {} feed request", id);
+        return users.getFeed(id);
     }
 
 }

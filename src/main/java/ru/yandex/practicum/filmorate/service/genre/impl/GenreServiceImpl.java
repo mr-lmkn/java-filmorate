@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class GenreServiceImpl implements GenreService {
-    private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     @Override
     public Genre getGenreById(Integer id) throws NoDataFoundException {
